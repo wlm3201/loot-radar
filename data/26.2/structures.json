@@ -1,0 +1,730 @@
+{
+  "version": "26.2",
+  "structureSets": [
+    {
+      "id": "minecraft:ancient_cities",
+      "placement": {
+        "type": "random_spread",
+        "salt": 20083232,
+        "spacing": 24,
+        "separation": 8,
+        "spreadType": "linear"
+      },
+      "structures": [
+        {
+          "id": "minecraft:ancient_city",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:buried_treasures",
+      "placement": {
+        "type": "random_spread",
+        "salt": 0,
+        "spacing": 1,
+        "separation": 0,
+        "spreadType": "linear",
+        "frequency": 0.01,
+        "frequencyReductionMethod": "legacy_type_2",
+        "locateOffset": [
+          9,
+          0,
+          9
+        ]
+      },
+      "structures": [
+        {
+          "id": "minecraft:buried_treasure",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:desert_pyramids",
+      "placement": {
+        "type": "random_spread",
+        "salt": 14357617,
+        "spacing": 32,
+        "separation": 8,
+        "spreadType": "linear"
+      },
+      "structures": [
+        {
+          "id": "minecraft:desert_pyramid",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:end_cities",
+      "placement": {
+        "type": "random_spread",
+        "salt": 10387313,
+        "spacing": 20,
+        "separation": 11,
+        "spreadType": "triangular"
+      },
+      "structures": [
+        {
+          "id": "minecraft:end_city",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:igloos",
+      "placement": {
+        "type": "random_spread",
+        "salt": 14357618,
+        "spacing": 32,
+        "separation": 8,
+        "spreadType": "linear"
+      },
+      "structures": [
+        {
+          "id": "minecraft:igloo",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:jungle_temples",
+      "placement": {
+        "type": "random_spread",
+        "salt": 14357619,
+        "spacing": 32,
+        "separation": 8,
+        "spreadType": "linear"
+      },
+      "structures": [
+        {
+          "id": "minecraft:jungle_pyramid",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:mineshafts",
+      "placement": {
+        "type": "random_spread",
+        "salt": 0,
+        "spacing": 1,
+        "separation": 0,
+        "spreadType": "linear",
+        "frequency": 0.004,
+        "frequencyReductionMethod": "legacy_type_3"
+      },
+      "structures": [
+        {
+          "id": "minecraft:mineshaft",
+          "weight": 1
+        },
+        {
+          "id": "minecraft:mineshaft_mesa",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:nether_complexes",
+      "placement": {
+        "type": "random_spread",
+        "salt": 30084232,
+        "spacing": 27,
+        "separation": 4,
+        "spreadType": "linear"
+      },
+      "structures": [
+        {
+          "id": "minecraft:fortress",
+          "weight": 2
+        },
+        {
+          "id": "minecraft:bastion_remnant",
+          "weight": 3
+        }
+      ]
+    },
+    {
+      "id": "minecraft:nether_fossils",
+      "placement": {
+        "type": "random_spread",
+        "salt": 14357921,
+        "spacing": 2,
+        "separation": 1,
+        "spreadType": "linear"
+      },
+      "structures": [
+        {
+          "id": "minecraft:nether_fossil",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:ocean_monuments",
+      "placement": {
+        "type": "random_spread",
+        "salt": 10387313,
+        "spacing": 32,
+        "separation": 5,
+        "spreadType": "triangular"
+      },
+      "structures": [
+        {
+          "id": "minecraft:monument",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:ocean_ruins",
+      "placement": {
+        "type": "random_spread",
+        "salt": 14357621,
+        "spacing": 20,
+        "separation": 8,
+        "spreadType": "linear"
+      },
+      "structures": [
+        {
+          "id": "minecraft:ocean_ruin_cold",
+          "weight": 1
+        },
+        {
+          "id": "minecraft:ocean_ruin_warm",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:pillager_outposts",
+      "placement": {
+        "type": "random_spread",
+        "salt": 165745296,
+        "spacing": 32,
+        "separation": 8,
+        "spreadType": "linear",
+        "frequency": 0.2,
+        "frequencyReductionMethod": "legacy_type_1",
+        "exclusionZone": {
+          "chunkCount": 10,
+          "otherSet": "minecraft:villages"
+        }
+      },
+      "structures": [
+        {
+          "id": "minecraft:pillager_outpost",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:ruined_portals",
+      "placement": {
+        "type": "random_spread",
+        "salt": 34222645,
+        "spacing": 40,
+        "separation": 15,
+        "spreadType": "linear"
+      },
+      "structures": [
+        {
+          "id": "minecraft:ruined_portal",
+          "weight": 1
+        },
+        {
+          "id": "minecraft:ruined_portal_desert",
+          "weight": 1
+        },
+        {
+          "id": "minecraft:ruined_portal_jungle",
+          "weight": 1
+        },
+        {
+          "id": "minecraft:ruined_portal_swamp",
+          "weight": 1
+        },
+        {
+          "id": "minecraft:ruined_portal_mountain",
+          "weight": 1
+        },
+        {
+          "id": "minecraft:ruined_portal_ocean",
+          "weight": 1
+        },
+        {
+          "id": "minecraft:ruined_portal_nether",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:shipwrecks",
+      "placement": {
+        "type": "random_spread",
+        "salt": 165745295,
+        "spacing": 24,
+        "separation": 4,
+        "spreadType": "linear"
+      },
+      "structures": [
+        {
+          "id": "minecraft:shipwreck",
+          "weight": 1
+        },
+        {
+          "id": "minecraft:shipwreck_beached",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:strongholds",
+      "placement": {
+        "type": "concentric_rings",
+        "salt": 0,
+        "count": 128,
+        "distance": 32,
+        "spread": 3
+      },
+      "structures": [
+        {
+          "id": "minecraft:stronghold",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:swamp_huts",
+      "placement": {
+        "type": "random_spread",
+        "salt": 14357620,
+        "spacing": 32,
+        "separation": 8,
+        "spreadType": "linear"
+      },
+      "structures": [
+        {
+          "id": "minecraft:swamp_hut",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:trail_ruins",
+      "placement": {
+        "type": "random_spread",
+        "salt": 83469867,
+        "spacing": 34,
+        "separation": 8,
+        "spreadType": "linear"
+      },
+      "structures": [
+        {
+          "id": "minecraft:trail_ruins",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:trial_chambers",
+      "placement": {
+        "type": "random_spread",
+        "salt": 94251327,
+        "spacing": 34,
+        "separation": 12,
+        "spreadType": "linear"
+      },
+      "structures": [
+        {
+          "id": "minecraft:trial_chambers",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:villages",
+      "placement": {
+        "type": "random_spread",
+        "salt": 10387312,
+        "spacing": 34,
+        "separation": 8,
+        "spreadType": "linear"
+      },
+      "structures": [
+        {
+          "id": "minecraft:village_plains",
+          "weight": 1
+        },
+        {
+          "id": "minecraft:village_desert",
+          "weight": 1
+        },
+        {
+          "id": "minecraft:village_savanna",
+          "weight": 1
+        },
+        {
+          "id": "minecraft:village_snowy",
+          "weight": 1
+        },
+        {
+          "id": "minecraft:village_taiga",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "minecraft:woodland_mansions",
+      "placement": {
+        "type": "random_spread",
+        "salt": 10387319,
+        "spacing": 80,
+        "separation": 20,
+        "spreadType": "triangular"
+      },
+      "structures": [
+        {
+          "id": "minecraft:mansion",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "lootradar:desert_wells",
+      "placement": {
+        "type": "feature"
+      },
+      "structures": [
+        {
+          "id": "minecraft:desert_well",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "lootradar:monster_rooms",
+      "placement": {
+        "type": "feature"
+      },
+      "structures": [
+        {
+          "id": "minecraft:monster_room",
+          "weight": 1
+        }
+      ]
+    }
+  ],
+  "structures": [
+    {
+      "id": "minecraft:ancient_city",
+      "zhName": "远古城市",
+      "dimension": "overworld",
+      "set": "minecraft:ancient_cities",
+      "generationStep": 7,
+      "decorationIndex": 0
+    },
+    {
+      "id": "minecraft:buried_treasure",
+      "zhName": "埋藏的宝藏",
+      "dimension": "overworld",
+      "set": "minecraft:buried_treasures",
+      "generationStep": 3,
+      "decorationIndex": 0
+    },
+    {
+      "id": "minecraft:desert_pyramid",
+      "zhName": "沙漠神殿",
+      "dimension": "overworld",
+      "set": "minecraft:desert_pyramids",
+      "generationStep": 4,
+      "decorationIndex": 1
+    },
+    {
+      "id": "minecraft:desert_well",
+      "zhName": "沙漠水井",
+      "dimension": "overworld",
+      "set": "lootradar:desert_wells",
+      "notes": "feature 放置，考古来源",
+      "featureStep": 4,
+      "featureIndex": 2,
+      "rarity": 1000
+    },
+    {
+      "id": "minecraft:end_city",
+      "zhName": "末地城",
+      "dimension": "the_end",
+      "set": "minecraft:end_cities",
+      "generationStep": 4,
+      "decorationIndex": 2
+    },
+    {
+      "id": "minecraft:igloo",
+      "zhName": "雪屋",
+      "dimension": "overworld",
+      "set": "minecraft:igloos",
+      "notes": "无目标战利品，保留用于定位完整性",
+      "generationStep": 4,
+      "decorationIndex": 3
+    },
+    {
+      "id": "minecraft:jungle_pyramid",
+      "zhName": "丛林神庙",
+      "dimension": "overworld",
+      "set": "minecraft:jungle_temples",
+      "generationStep": 4,
+      "decorationIndex": 4
+    },
+    {
+      "id": "minecraft:mineshaft",
+      "zhName": "废弃矿井",
+      "dimension": "overworld",
+      "set": "minecraft:mineshafts",
+      "notes": "Bounce 取决于运输矿车首次开启位置的硫黄洞穴群系；噪声地形预测已通过种子 0 样本实测，完整地形覆盖仍为实验性",
+      "generationStep": 3,
+      "decorationIndex": 1
+    },
+    {
+      "id": "minecraft:mineshaft_mesa",
+      "zhName": "废弃矿井（恶地）",
+      "dimension": "overworld",
+      "set": "minecraft:mineshafts",
+      "generationStep": 3,
+      "decorationIndex": 2
+    },
+    {
+      "id": "minecraft:fortress",
+      "zhName": "下界要塞",
+      "dimension": "the_nether",
+      "set": "minecraft:nether_complexes",
+      "notes": "与堡垒遗迹共享 nether_complexes 候选，按权重挑选",
+      "generationStep": 7,
+      "decorationIndex": 1
+    },
+    {
+      "id": "minecraft:bastion_remnant",
+      "zhName": "堡垒遗迹",
+      "dimension": "the_nether",
+      "set": "minecraft:nether_complexes",
+      "notes": "藏宝室/桥/塔尖/疣猪兽棚为 piece 级来源",
+      "generationStep": 4,
+      "decorationIndex": 0
+    },
+    {
+      "id": "minecraft:nether_fossil",
+      "zhName": "下界化石",
+      "dimension": "the_nether",
+      "set": "minecraft:nether_fossils",
+      "generationStep": 7,
+      "decorationIndex": 2
+    },
+    {
+      "id": "minecraft:monument",
+      "zhName": "海底神殿",
+      "dimension": "overworld",
+      "set": "minecraft:ocean_monuments",
+      "notes": "远古守卫者生物掉落来源",
+      "generationStep": 4,
+      "decorationIndex": 6
+    },
+    {
+      "id": "minecraft:ocean_ruin_cold",
+      "zhName": "冷水海底废墟",
+      "dimension": "overworld",
+      "set": "minecraft:ocean_ruins",
+      "notes": "大型/小型为 piece 级区分",
+      "generationStep": 4,
+      "decorationIndex": 7
+    },
+    {
+      "id": "minecraft:ocean_ruin_warm",
+      "zhName": "暖水海底废墟",
+      "dimension": "overworld",
+      "set": "minecraft:ocean_ruins",
+      "notes": "大型/小型为 piece 级区分",
+      "generationStep": 4,
+      "decorationIndex": 8
+    },
+    {
+      "id": "minecraft:pillager_outpost",
+      "zhName": "掠夺者前哨站",
+      "dimension": "overworld",
+      "set": "minecraft:pillager_outposts",
+      "notes": "带村庄排除区与 legacy_type_1 频率过滤",
+      "generationStep": 4,
+      "decorationIndex": 9
+    },
+    {
+      "id": "minecraft:ruined_portal",
+      "zhName": "废弃传送门",
+      "dimension": "overworld",
+      "set": "minecraft:ruined_portals",
+      "generationStep": 4,
+      "decorationIndex": 10
+    },
+    {
+      "id": "minecraft:ruined_portal_desert",
+      "zhName": "废弃传送门（沙漠）",
+      "dimension": "overworld",
+      "set": "minecraft:ruined_portals",
+      "generationStep": 4,
+      "decorationIndex": 11
+    },
+    {
+      "id": "minecraft:ruined_portal_jungle",
+      "zhName": "废弃传送门（丛林）",
+      "dimension": "overworld",
+      "set": "minecraft:ruined_portals",
+      "generationStep": 4,
+      "decorationIndex": 12
+    },
+    {
+      "id": "minecraft:ruined_portal_swamp",
+      "zhName": "废弃传送门（沼泽）",
+      "dimension": "overworld",
+      "set": "minecraft:ruined_portals",
+      "generationStep": 4,
+      "decorationIndex": 16
+    },
+    {
+      "id": "minecraft:ruined_portal_mountain",
+      "zhName": "废弃传送门（山地）",
+      "dimension": "overworld",
+      "set": "minecraft:ruined_portals",
+      "generationStep": 4,
+      "decorationIndex": 13
+    },
+    {
+      "id": "minecraft:ruined_portal_ocean",
+      "zhName": "废弃传送门（海洋）",
+      "dimension": "overworld",
+      "set": "minecraft:ruined_portals",
+      "generationStep": 4,
+      "decorationIndex": 15
+    },
+    {
+      "id": "minecraft:ruined_portal_nether",
+      "zhName": "废弃传送门（下界）",
+      "dimension": "the_nether",
+      "set": "minecraft:ruined_portals",
+      "generationStep": 4,
+      "decorationIndex": 14
+    },
+    {
+      "id": "minecraft:shipwreck",
+      "zhName": "沉船",
+      "dimension": "overworld",
+      "set": "minecraft:shipwrecks",
+      "notes": "宝箱/补给箱/地图箱为 piece 级来源",
+      "generationStep": 4,
+      "decorationIndex": 17
+    },
+    {
+      "id": "minecraft:shipwreck_beached",
+      "zhName": "沉船（搁浅）",
+      "dimension": "overworld",
+      "set": "minecraft:shipwrecks",
+      "generationStep": 4,
+      "decorationIndex": 18
+    },
+    {
+      "id": "minecraft:stronghold",
+      "zhName": "要塞",
+      "dimension": "overworld",
+      "set": "minecraft:strongholds",
+      "notes": "同心圆放置；走廊/图书馆为 piece 级来源，走廊可跳过",
+      "skipKey": "stronghold_corridor",
+      "generationStep": 4,
+      "decorationIndex": 19
+    },
+    {
+      "id": "minecraft:swamp_hut",
+      "zhName": "女巫小屋",
+      "dimension": "overworld",
+      "set": "minecraft:swamp_huts",
+      "generationStep": 4,
+      "decorationIndex": 20
+    },
+    {
+      "id": "minecraft:trail_ruins",
+      "zhName": "古迹废墟",
+      "dimension": "overworld",
+      "set": "minecraft:trail_ruins",
+      "notes": "考古来源",
+      "generationStep": 3,
+      "decorationIndex": 3
+    },
+    {
+      "id": "minecraft:trial_chambers",
+      "zhName": "试炼密室",
+      "dimension": "overworld",
+      "set": "minecraft:trial_chambers",
+      "notes": "宝库/不祥宝库/陶罐/柱廊陶罐来源",
+      "generationStep": 3,
+      "decorationIndex": 4
+    },
+    {
+      "id": "minecraft:village_plains",
+      "zhName": "村庄（平原）",
+      "dimension": "overworld",
+      "set": "minecraft:villages",
+      "notes": "武器匠小屋为 piece 级来源",
+      "generationStep": 4,
+      "decorationIndex": 22
+    },
+    {
+      "id": "minecraft:village_desert",
+      "zhName": "村庄（沙漠）",
+      "dimension": "overworld",
+      "set": "minecraft:villages",
+      "generationStep": 4,
+      "decorationIndex": 21
+    },
+    {
+      "id": "minecraft:village_savanna",
+      "zhName": "村庄（热带草原）",
+      "dimension": "overworld",
+      "set": "minecraft:villages",
+      "generationStep": 4,
+      "decorationIndex": 23
+    },
+    {
+      "id": "minecraft:village_snowy",
+      "zhName": "村庄（雪原）",
+      "dimension": "overworld",
+      "set": "minecraft:villages",
+      "generationStep": 4,
+      "decorationIndex": 24
+    },
+    {
+      "id": "minecraft:village_taiga",
+      "zhName": "村庄（针叶林）",
+      "dimension": "overworld",
+      "set": "minecraft:villages",
+      "generationStep": 4,
+      "decorationIndex": 25
+    },
+    {
+      "id": "minecraft:mansion",
+      "zhName": "林地府邸",
+      "dimension": "overworld",
+      "set": "minecraft:woodland_mansions",
+      "generationStep": 4,
+      "decorationIndex": 5
+    },
+    {
+      "id": "minecraft:monster_room",
+      "zhName": "刷怪房",
+      "dimension": "overworld",
+      "set": "lootradar:monster_rooms",
+      "notes": "地牢，feature 放置；无独有物品且耗时长，可跳过",
+      "skipKey": "dungeon",
+      "featureStep": 3,
+      "featureIndex": 2,
+      "featureStepDeep": 3,
+      "featureIndexDeep": 3
+    }
+  ]
+}

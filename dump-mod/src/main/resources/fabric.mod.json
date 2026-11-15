@@ -1,0 +1,22 @@
+{
+	"schemaVersion": 1,
+	"id": "lootradar",
+	"version": "${version}",
+	"name": "Loot Radar Dump",
+	"description": "Dumps real block-entity loot data from a Minecraft server for loot-radar verification.",
+	"authors": ["wlm3201"],
+	"contact": {
+		"sources": "https://github.com/local/loot-radar"
+	},
+	"license": "MIT",
+	"environment": "*",
+	"entrypoints": {
+		"main": ["com.lootradar.dump.LootRadarDump"]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.5",
+		"java": ">=25",
+		"minecraft": "${minecraft_dependency}",
+		"fabric-api": "*"
+	}
+}

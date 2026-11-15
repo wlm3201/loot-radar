@@ -1,0 +1,1160 @@
+{
+  "version": "26.4",
+  "groups": [
+    {
+      "id": "template",
+      "zhName": "模板",
+      "defaultSelected": true
+    },
+    {
+      "id": "sherd",
+      "zhName": "陶片",
+      "defaultSelected": true
+    },
+    {
+      "id": "record",
+      "zhName": "唱片",
+      "defaultSelected": false
+    },
+    {
+      "id": "armor",
+      "zhName": "铠甲",
+      "defaultSelected": false
+    },
+    {
+      "id": "other",
+      "zhName": "其他",
+      "defaultSelected": false
+    }
+  ],
+  "items": [
+    {
+      "id": "minecraft:friend_pottery_sherd",
+      "zhName": "挚友纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "古迹废墟",
+          "structures": [
+            "minecraft:trail_ruins"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:prize_pottery_sherd",
+      "zhName": "珍宝纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "沙漠神殿",
+          "structures": [
+            "minecraft:desert_pyramid"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:snort_pottery_sherd",
+      "zhName": "嗅探纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "暖水海底废墟",
+          "structures": [
+            "minecraft:ocean_ruin_warm"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:heartbreak_pottery_sherd",
+      "zhName": "心碎纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "古迹废墟",
+          "structures": [
+            "minecraft:trail_ruins"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:danger_pottery_sherd",
+      "zhName": "危机纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "古迹废墟",
+          "structures": [
+            "minecraft:trail_ruins"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:skull_pottery_sherd",
+      "zhName": "头颅纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "沙漠神殿",
+          "structures": [
+            "minecraft:desert_pyramid"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:explorer_pottery_sherd",
+      "zhName": "探险纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "冷水海底废墟",
+          "structures": [
+            "minecraft:ocean_ruin_cold"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:shelter_pottery_sherd",
+      "zhName": "树荫纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "暖水海底废墟",
+          "structures": [
+            "minecraft:ocean_ruin_warm"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:sheaf_pottery_sherd",
+      "zhName": "麦捆纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "古迹废墟",
+          "structures": [
+            "minecraft:trail_ruins"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:burn_pottery_sherd",
+      "zhName": "烈焰纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "古迹废墟",
+          "structures": [
+            "minecraft:trail_ruins"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:blade_pottery_sherd",
+      "zhName": "利刃纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "冷水海底废墟",
+          "structures": [
+            "minecraft:ocean_ruin_cold"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:howl_pottery_sherd",
+      "zhName": "狼嚎纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "古迹废墟",
+          "structures": [
+            "minecraft:trail_ruins"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:arms_up_pottery_sherd",
+      "zhName": "举臂纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "沙漠水井",
+          "structures": [
+            "minecraft:desert_well"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:brewer_pottery_sherd",
+      "zhName": "佳酿纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "沙漠水井",
+          "structures": [
+            "minecraft:desert_well"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:archer_pottery_sherd",
+      "zhName": "弓箭纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "沙漠神殿",
+          "structures": [
+            "minecraft:desert_pyramid"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:plenty_pottery_sherd",
+      "zhName": "富饶纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "冷水海底废墟",
+          "structures": [
+            "minecraft:ocean_ruin_cold"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:angler_pottery_sherd",
+      "zhName": "垂钓纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "暖水海底废墟",
+          "structures": [
+            "minecraft:ocean_ruin_warm"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:miner_pottery_sherd",
+      "zhName": "采矿纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "沙漠神殿",
+          "structures": [
+            "minecraft:desert_pyramid"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:mourner_pottery_sherd",
+      "zhName": "悲恸纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "冷水海底废墟",
+          "structures": [
+            "minecraft:ocean_ruin_cold"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:heart_pottery_sherd",
+      "zhName": "爱心纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "古迹废墟",
+          "structures": [
+            "minecraft:trail_ruins"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:flow_pottery_sherd",
+      "zhName": "涡流纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "试炼密室陶罐",
+          "structures": [
+            "minecraft:trial_chambers"
+          ],
+          "method": "pot_sherd"
+        },
+        {
+          "label": "试炼密室柱廊陶罐",
+          "structures": [
+            "minecraft:trial_chambers"
+          ],
+          "method": "corridor_pot"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:guster_pottery_sherd",
+      "zhName": "旋风纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "试炼密室柱廊陶罐",
+          "structures": [
+            "minecraft:trial_chambers"
+          ],
+          "method": "corridor_pot"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:scrape_pottery_sherd",
+      "zhName": "刮削纹样陶片",
+      "group": "sherd",
+      "sources": [
+        {
+          "label": "试炼密室柱廊陶罐",
+          "structures": [
+            "minecraft:trial_chambers"
+          ],
+          "method": "corridor_pot"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:netherite_upgrade_smithing_template",
+      "zhName": "下界合金升级",
+      "group": "template",
+      "sources": [
+        {
+          "label": "堡垒遗迹",
+          "structures": [
+            "minecraft:bastion_remnant"
+          ],
+          "method": "chest",
+          "pieces": [
+            "堡垒遗迹藏宝室",
+            "堡垒遗迹桥",
+            "堡垒遗迹塔尖",
+            "堡垒遗迹疣猪兽棚"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:coast_armor_trim_smithing_template",
+      "zhName": "海岸盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "沉船",
+          "structures": [
+            "minecraft:shipwreck",
+            "minecraft:shipwreck_beached"
+          ],
+          "method": "chest",
+          "pieces": [
+            "沉船宝箱",
+            "沉船补给箱",
+            "沉船地图箱"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:wild_armor_trim_smithing_template",
+      "zhName": "荒野盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "丛林神庙",
+          "structures": [
+            "minecraft:jungle_pyramid"
+          ],
+          "method": "chest"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:spire_armor_trim_smithing_template",
+      "zhName": "尖塔盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "末地城",
+          "structures": [
+            "minecraft:end_city"
+          ],
+          "method": "chest"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:ward_armor_trim_smithing_template",
+      "zhName": "监守盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "远古城市",
+          "structures": [
+            "minecraft:ancient_city"
+          ],
+          "method": "chest"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:rib_armor_trim_smithing_template",
+      "zhName": "肋骨盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "下界要塞",
+          "structures": [
+            "minecraft:fortress"
+          ],
+          "method": "chest"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:vex_armor_trim_smithing_template",
+      "zhName": "恼鬼盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "林地府邸",
+          "structures": [
+            "minecraft:mansion"
+          ],
+          "method": "chest"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:dune_armor_trim_smithing_template",
+      "zhName": "沙丘盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "沙漠神殿",
+          "structures": [
+            "minecraft:desert_pyramid"
+          ],
+          "method": "chest"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:sentry_armor_trim_smithing_template",
+      "zhName": "哨兵盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "掠夺者前哨站",
+          "structures": [
+            "minecraft:pillager_outpost"
+          ],
+          "method": "chest"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:flow_armor_trim_smithing_template",
+      "zhName": "涡流盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "试炼密室不祥宝库",
+          "structures": [
+            "minecraft:trial_chambers"
+          ],
+          "method": "vault_ominous"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:bolt_armor_trim_smithing_template",
+      "zhName": "镶铆盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "试炼密室宝库",
+          "structures": [
+            "minecraft:trial_chambers"
+          ],
+          "method": "vault"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:eye_armor_trim_smithing_template",
+      "zhName": "眼眸盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "要塞",
+          "structures": [
+            "minecraft:stronghold"
+          ],
+          "method": "chest",
+          "pieces": [
+            "要塞走廊",
+            "要塞图书馆"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:silence_armor_trim_smithing_template",
+      "zhName": "幽静盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "远古城市",
+          "structures": [
+            "minecraft:ancient_city"
+          ],
+          "method": "chest"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:snout_armor_trim_smithing_template",
+      "zhName": "猪鼻盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "堡垒遗迹",
+          "structures": [
+            "minecraft:bastion_remnant"
+          ],
+          "method": "chest",
+          "pieces": [
+            "堡垒遗迹藏宝室",
+            "堡垒遗迹桥",
+            "堡垒遗迹塔尖",
+            "堡垒遗迹疣猪兽棚"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:host_armor_trim_smithing_template",
+      "zhName": "雇主盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "古迹废墟",
+          "structures": [
+            "minecraft:trail_ruins"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:raiser_armor_trim_smithing_template",
+      "zhName": "牧民盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "古迹废墟",
+          "structures": [
+            "minecraft:trail_ruins"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:shaper_armor_trim_smithing_template",
+      "zhName": "塑造盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "古迹废墟",
+          "structures": [
+            "minecraft:trail_ruins"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:wayfinder_armor_trim_smithing_template",
+      "zhName": "向导盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "古迹废墟",
+          "structures": [
+            "minecraft:trail_ruins"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:tide_armor_trim_smithing_template",
+      "zhName": "潮汐盔甲纹饰",
+      "group": "template",
+      "sources": [
+        {
+          "label": "远古守卫者",
+          "structures": [
+            "minecraft:monument"
+          ],
+          "method": "entity"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:disc_fragment_5",
+      "zhName": "唱片残片（5）",
+      "group": "record",
+      "sources": [
+        {
+          "label": "远古城市",
+          "structures": [
+            "minecraft:ancient_city"
+          ],
+          "method": "chest"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:music_disc_bounce",
+      "zhName": "音乐唱片（Bounce）",
+      "group": "record",
+      "sources": [
+        {
+          "label": "硫黄洞穴废弃矿井",
+          "structures": [
+            "minecraft:mineshaft"
+          ],
+          "method": "chest"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:music_disc_creator_music_box",
+      "zhName": "音乐唱片（Creator（八音盒））",
+      "group": "record",
+      "sources": [
+        {
+          "label": "试炼密室柱廊陶罐",
+          "structures": [
+            "minecraft:trial_chambers"
+          ],
+          "method": "corridor_pot"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:music_disc_creator",
+      "zhName": "音乐唱片（Creator）",
+      "group": "record",
+      "sources": [
+        {
+          "label": "试炼密室不祥宝库",
+          "structures": [
+            "minecraft:trial_chambers"
+          ],
+          "method": "vault_ominous"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:music_disc_otherside",
+      "zhName": "音乐唱片（otherside）",
+      "group": "record",
+      "sources": [
+        {
+          "label": "远古城市",
+          "structures": [
+            "minecraft:ancient_city"
+          ],
+          "method": "chest"
+        },
+        {
+          "label": "刷怪房",
+          "structures": [
+            "minecraft:monster_room"
+          ],
+          "method": "chest"
+        },
+        {
+          "label": "要塞走廊",
+          "structures": [
+            "minecraft:stronghold"
+          ],
+          "method": "chest",
+          "skipKey": "stronghold_corridor"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:music_disc_pigstep",
+      "zhName": "音乐唱片（Pigstep）",
+      "group": "record",
+      "sources": [
+        {
+          "label": "堡垒遗迹塔尖",
+          "structures": [
+            "minecraft:bastion_remnant"
+          ],
+          "method": "chest",
+          "pieces": [
+            "堡垒遗迹塔尖"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:music_disc_precipice",
+      "zhName": "音乐唱片（Precipice）",
+      "group": "record",
+      "sources": [
+        {
+          "label": "试炼密室宝库",
+          "structures": [
+            "minecraft:trial_chambers"
+          ],
+          "method": "vault"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:music_disc_relic",
+      "zhName": "音乐唱片（Relic）",
+      "group": "record",
+      "sources": [
+        {
+          "label": "古迹废墟",
+          "structures": [
+            "minecraft:trail_ruins"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:iron_nautilus_armor",
+      "zhName": "铁鹦鹉螺铠",
+      "group": "armor",
+      "sources": [
+        {
+          "label": "海底废墟/沉船/宝藏",
+          "structures": [
+            "minecraft:shipwreck",
+            "minecraft:shipwreck_beached",
+            "minecraft:buried_treasure",
+            "minecraft:ocean_ruin_cold",
+            "minecraft:ocean_ruin_warm"
+          ],
+          "method": "chest",
+          "pieces": [
+            "沉船补给箱",
+            "沉船宝箱",
+            "沉船地图箱",
+            "埋藏的宝藏",
+            "大型海底废墟",
+            "小型海底废墟"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:copper_nautilus_armor",
+      "zhName": "铜鹦鹉螺铠",
+      "group": "armor",
+      "sources": [
+        {
+          "label": "海底废墟/沉船/宝藏",
+          "structures": [
+            "minecraft:shipwreck",
+            "minecraft:shipwreck_beached",
+            "minecraft:buried_treasure",
+            "minecraft:ocean_ruin_cold",
+            "minecraft:ocean_ruin_warm"
+          ],
+          "method": "chest",
+          "pieces": [
+            "沉船补给箱",
+            "沉船宝箱",
+            "沉船地图箱",
+            "埋藏的宝藏",
+            "大型海底废墟",
+            "小型海底废墟"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:golden_nautilus_armor",
+      "zhName": "金鹦鹉螺铠",
+      "group": "armor",
+      "sources": [
+        {
+          "label": "海底废墟/沉船/宝藏",
+          "structures": [
+            "minecraft:shipwreck",
+            "minecraft:shipwreck_beached",
+            "minecraft:buried_treasure",
+            "minecraft:ocean_ruin_cold",
+            "minecraft:ocean_ruin_warm"
+          ],
+          "method": "chest",
+          "pieces": [
+            "沉船补给箱",
+            "沉船宝箱",
+            "沉船地图箱",
+            "埋藏的宝藏",
+            "大型海底废墟",
+            "小型海底废墟"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:diamond_nautilus_armor",
+      "zhName": "钻石鹦鹉螺铠",
+      "group": "armor",
+      "sources": [
+        {
+          "label": "海底废墟/沉船/宝藏",
+          "structures": [
+            "minecraft:shipwreck",
+            "minecraft:shipwreck_beached",
+            "minecraft:buried_treasure",
+            "minecraft:ocean_ruin_cold",
+            "minecraft:ocean_ruin_warm"
+          ],
+          "method": "chest",
+          "pieces": [
+            "沉船补给箱",
+            "沉船宝箱",
+            "沉船地图箱",
+            "埋藏的宝藏",
+            "大型海底废墟",
+            "小型海底废墟"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:iron_horse_armor",
+      "zhName": "铁马铠",
+      "group": "armor",
+      "sources": [
+        {
+          "label": "结构箱子",
+          "structures": [
+            "minecraft:end_city",
+            "minecraft:monster_room",
+            "minecraft:desert_pyramid",
+            "minecraft:stronghold",
+            "minecraft:village_plains",
+            "minecraft:village_desert",
+            "minecraft:village_savanna",
+            "minecraft:village_snowy",
+            "minecraft:village_taiga",
+            "minecraft:fortress",
+            "minecraft:jungle_pyramid"
+          ],
+          "method": "chest",
+          "pieces": [
+            "末地城",
+            "刷怪房",
+            "沙漠神殿",
+            "要塞走廊",
+            "村庄武器匠小屋",
+            "下界要塞",
+            "丛林神庙"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:copper_horse_armor",
+      "zhName": "铜马铠",
+      "group": "armor",
+      "sources": [
+        {
+          "label": "结构箱子",
+          "structures": [
+            "minecraft:end_city",
+            "minecraft:monster_room",
+            "minecraft:desert_pyramid",
+            "minecraft:stronghold",
+            "minecraft:village_plains",
+            "minecraft:village_desert",
+            "minecraft:village_savanna",
+            "minecraft:village_snowy",
+            "minecraft:village_taiga",
+            "minecraft:fortress",
+            "minecraft:jungle_pyramid"
+          ],
+          "method": "chest",
+          "pieces": [
+            "末地城",
+            "刷怪房",
+            "沙漠神殿",
+            "要塞走廊",
+            "村庄武器匠小屋",
+            "下界要塞",
+            "丛林神庙"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:golden_horse_armor",
+      "zhName": "金马铠",
+      "group": "armor",
+      "sources": [
+        {
+          "label": "结构箱子",
+          "structures": [
+            "minecraft:ruined_portal",
+            "minecraft:ruined_portal_desert",
+            "minecraft:ruined_portal_jungle",
+            "minecraft:ruined_portal_swamp",
+            "minecraft:ruined_portal_mountain",
+            "minecraft:ruined_portal_ocean",
+            "minecraft:ruined_portal_nether",
+            "minecraft:end_city",
+            "minecraft:monster_room",
+            "minecraft:desert_pyramid",
+            "minecraft:stronghold",
+            "minecraft:village_plains",
+            "minecraft:village_desert",
+            "minecraft:village_savanna",
+            "minecraft:village_snowy",
+            "minecraft:village_taiga",
+            "minecraft:fortress",
+            "minecraft:jungle_pyramid"
+          ],
+          "method": "chest",
+          "pieces": [
+            "废弃传送门",
+            "末地城",
+            "刷怪房",
+            "沙漠神殿",
+            "要塞走廊",
+            "村庄武器匠小屋",
+            "下界要塞",
+            "丛林神庙"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:diamond_horse_armor",
+      "zhName": "钻石马铠",
+      "group": "armor",
+      "sources": [
+        {
+          "label": "结构箱子",
+          "structures": [
+            "minecraft:ancient_city",
+            "minecraft:end_city",
+            "minecraft:monster_room",
+            "minecraft:desert_pyramid",
+            "minecraft:stronghold",
+            "minecraft:village_plains",
+            "minecraft:village_desert",
+            "minecraft:village_savanna",
+            "minecraft:village_snowy",
+            "minecraft:village_taiga",
+            "minecraft:fortress",
+            "minecraft:jungle_pyramid"
+          ],
+          "method": "chest",
+          "pieces": [
+            "远古城市",
+            "末地城",
+            "刷怪房",
+            "沙漠神殿",
+            "要塞走廊",
+            "村庄武器匠小屋",
+            "下界要塞",
+            "丛林神庙"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:flow_banner_pattern",
+      "zhName": "涡流旗帜图案",
+      "group": "other",
+      "sources": [
+        {
+          "label": "试炼密室不祥宝库",
+          "structures": [
+            "minecraft:trial_chambers"
+          ],
+          "method": "vault_ominous"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:guster_banner_pattern",
+      "zhName": "旋风旗帜图案",
+      "group": "other",
+      "sources": [
+        {
+          "label": "试炼密室宝库",
+          "structures": [
+            "minecraft:trial_chambers"
+          ],
+          "method": "vault"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:piglin_banner_pattern",
+      "zhName": "猪鼻旗帜图案",
+      "group": "other",
+      "sources": [
+        {
+          "label": "堡垒遗迹塔尖",
+          "structures": [
+            "minecraft:bastion_remnant"
+          ],
+          "method": "chest",
+          "pieces": [
+            "堡垒遗迹塔尖"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:heavy_core",
+      "zhName": "沉重核心",
+      "group": "other",
+      "sources": [
+        {
+          "label": "试炼密室不祥宝库",
+          "structures": [
+            "minecraft:trial_chambers"
+          ],
+          "method": "vault_ominous"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:heart_of_the_sea",
+      "zhName": "海洋之心",
+      "group": "other",
+      "sources": [
+        {
+          "label": "埋藏的宝藏",
+          "structures": [
+            "minecraft:buried_treasure"
+          ],
+          "method": "chest"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:echo_shard",
+      "zhName": "回响碎片",
+      "group": "other",
+      "sources": [
+        {
+          "label": "远古城市",
+          "structures": [
+            "minecraft:ancient_city"
+          ],
+          "method": "chest"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:sniffer_egg",
+      "zhName": "嗅探兽蛋",
+      "group": "other",
+      "sources": [
+        {
+          "label": "暖水海底废墟",
+          "structures": [
+            "minecraft:ocean_ruin_warm"
+          ],
+          "method": "archaeology"
+        }
+      ]
+    },
+    {
+      "id": "minecraft:netherite_ingot",
+      "zhName": "下界合金锭",
+      "group": "other",
+      "sources": [
+        {
+          "label": "堡垒遗迹藏宝室",
+          "structures": [
+            "minecraft:bastion_remnant"
+          ],
+          "method": "chest",
+          "pieces": [
+            "堡垒遗迹藏宝室"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "minecraft:music_disc_flurry",
+      "zhName": "音乐唱片（Flurry）",
+      "group": "record",
+      "sources": [
+        {
+          "label": "雪屋",
+          "structures": [
+            "minecraft:igloo"
+          ],
+          "method": "chest",
+          "pieces": [
+            "雪屋地下室"
+          ]
+        }
+      ]
+    }
+  ]
+}

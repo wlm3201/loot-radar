@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 物品图标是从 client jar 导出的 16x16 PNG，放大时必须保持像素风格。 */
+.pixelated {
+  image-rendering: pixelated;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-ink-900 text-[#E6EDF7] font-sans text-sm antialiased;
+}
+
+::selection {
+  @apply bg-accent-dark text-white;
+}
+
+input[type='number'],
+input[type='text'] {
+  @apply bg-ink-800 border border-ink-600 rounded px-2 py-1 text-[#E6EDF7]
+    focus:outline-none focus:border-accent-deep;
+}
+
+button {
+  @apply rounded px-3 py-1.5 border border-ink-600 bg-ink-700 text-[#E6EDF7]
+    hover:border-accent-deep hover:bg-ink-600 active:bg-accent-dark
+    disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer;
+}
+
+.panel {
+  @apply bg-ink-800/80 border border-ink-600 rounded-lg;
+}
+
+.badge {
+  @apply inline-flex items-center rounded px-1.5 py-0.5 text-xs border;
+}

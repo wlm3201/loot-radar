@@ -1,0 +1,29 @@
+# java / gradle
+.gradle/
+**/build/
+*.class
+
+# node
+node_modules/
+web/dist/
+
+# Python verification tools
+__pycache__/
+
+# logs / stage markers
+*.log
+*.log.gz
+*.err
+*.ok
+*.pid
+
+# distributable output
+dist/
+
+# world / server run output
+**/run/
+crash-reports/
+
+# os
+Thumbs.db
+.DS_Store
