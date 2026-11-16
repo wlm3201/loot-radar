@@ -1,12 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { SearchHit } from '../types'
-import {
-  DIMENSION_LABELS,
-  denseInstanceRanks,
-  hitKey,
-  mergeSameLocation,
-  sourceLabel,
-} from '../types'
+import { denseInstanceRanks, hitKey, mergeSameLocation } from '../types'
+import { useI18n } from '../i18n'
 import { itemIconPath } from './ResultTable'
 
 // Canvas 雷达图：把同一结构实例的命中聚成一个点，支持缩放/平移与「已获取」标记。
@@ -29,7 +24,36 @@ interface Cluster {
 
 const DIMENSIONS = ['overworld', 'the_nether', 'the_end'] as const
 
+// 雷达详情的坐标与物品/结构视图保持一致：复制后短暂显示「已复制」反馈。
+function RadarCoords({ hit, distance }: { hit: SearchHit; distance: number }) {
+  const { t } = useI18n()
+  const [flash, setFlash] = useState<string | null>(null)
+  const coords = `${hit.x} ${hit.y} ${hit.z}`
+  const copy = (text: string, label: string) => {
+    void navigator.clipboard.writeText(text)
+    setFlash(label)
+    window.setTimeout(() => setFlash(null), 900)
+  }
+  return (
+    <span className="whitespace-nowrap">
+      <span
+        className="font-mono text-[#94A3B8] cursor-pointer hover:text-white"
+        title={t('results.copyTip')}
+        onClick={() => copy(coords, t('results.copied'))}
+        onContextMenu={(e) => {
+          e.preventDefault()
+          copy(`/tp ${coords}`, t('results.copiedTp'))
+        }}
+      >
+        {flash ?? coords}
+      </span>
+      <span className="text-[#64748B]"> {t('map.distance', { count: distance })}</span>
+    </span>
+  )
+}
+
 export function MapView({ hits, centerX, centerZ, radius, marked, onToggleMark }: Props) {
+  const { t, itemName, dimensionLabel, sourceLabel } = useI18n()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
   const [dimension, setDimension] = useState<string>('overworld')
@@ -184,7 +208,7 @@ export function MapView({ hits, centerX, centerZ, radius, marked, onToggleMark }
       ctx.stroke()
       ctx.lineWidth = 1
       ctx.fillStyle = '#22D3EE'
-      ctx.fillText('中心', ex + 10, ey - 6)
+      ctx.fillText(t('map.center'), ex + 10, ey - 6)
       if (!inside) {
         const angle = Math.atan2(cy - ey, cx - ex)
         ctx.beginPath()
@@ -250,7 +274,21 @@ export function MapView({ hits, centerX, centerZ, radius, marked, onToggleMark }
     const observer = new ResizeObserver(draw)
     observer.observe(wrap)
     return () => observer.disconnect()
-  }, [clusters, ranks, centerX, centerZ, radius, zoom, pan, selected, hovered, marked, iconsTick])
+  }, [
+    clusters,
+    ranks,
+    centerX,
+    centerZ,
+    radius,
+    zoom,
+    pan,
+    selected,
+    hovered,
+    marked,
+    iconsTick,
+    t,
+    sourceLabel,
+  ])
 
   const hitTest = (event: React.MouseEvent<HTMLCanvasElement>): Cluster | null => {
     const canvas = canvasRef.current
@@ -294,7 +332,7 @@ export function MapView({ hits, centerX, centerZ, radius, marked, onToggleMark }
                 : 'text-xs px-2 py-0.5'
             }
           >
-            {DIMENSION_LABELS[dim] ?? dim}
+            {dimensionLabel(dim)}
           </button>
         ))}
       </div>
@@ -359,12 +397,13 @@ export function MapView({ hits, centerX, centerZ, radius, marked, onToggleMark }
               {sourceLabel(selected.hits[0])} #{ranks.get(`${selected.hits[0].structureId}#${selected.instanceIndex}`) ?? selected.instanceIndex}
             </span>
             <button type="button" className="text-xs px-2 py-0.5" onClick={() => setSelected(null)}>
-              关闭 ✕
+              {t('map.close')}
             </button>
           </div>
           <div className="text-xs text-[#94A3B8]">
-            {DIMENSION_LABELS[selected.hits[0].dimension] ?? selected.hits[0].dimension}
-            {' · '}参考坐标 {selected.x} {selected.z}
+            {dimensionLabel(selected.hits[0].dimension)}
+            {' · '}
+            {t('map.refCoords', { x: selected.x, z: selected.z })}
           </div>
           <div className="flex flex-col gap-1 max-h-64 overflow-y-auto">
             {mergeSameLocation(selected.hits).map((hit, index) => {
@@ -388,23 +427,12 @@ export function MapView({ hits, centerX, centerZ, radius, marked, onToggleMark }
                     }}
                   />
                   <span className="flex-1 truncate">
-                    {hit.itemZhName} ×{hit.count}
+                    {itemName(hit.itemId, hit.itemZhName)} ×{hit.count}
                   </span>
-                  <span
-                    className="font-mono text-[#94A3B8] cursor-pointer hover:text-white"
-                    title="左键复制 x y z，右键复制 /tp"
-                    onClick={() => void navigator.clipboard.writeText(`${hit.x} ${hit.y} ${hit.z}`)}
-                    onContextMenu={(e) => {
-                      e.preventDefault()
-                      void navigator.clipboard.writeText(`/tp ${hit.x} ${hit.y} ${hit.z}`)
-                    }}
-                  >
-                    {hit.x} {hit.y} {hit.z}
-                    <span className="text-[#64748B]"> {distance}格</span>
-                  </span>
+                  <RadarCoords hit={hit} distance={distance} />
                   <button
                     type="button"
-                    title={isMarked ? '取消已获取标记' : '标记为已获取'}
+                    title={isMarked ? t('map.unmarkTip') : t('results.mark')}
                     onClick={() => onToggleMark(key)}
                     className={
                       'px-1.5 py-0.5 text-xs ' +

@@ -176,8 +176,10 @@ public final class Main {
 
     private static Path resolveWebRoot(Path appHome) {
         for (Path start : new Path[] {Path.of("."), appHome}) {
-            Path candidate = findUp(start, "web-dist");
-            if (candidate == null) {
+            Path candidate = findUp(start, "web", "assets");
+            if (candidate != null) {
+                candidate = candidate.getParent();
+            } else {
                 candidate = findUp(start, "web", "dist");
             }
             if (candidate != null) {

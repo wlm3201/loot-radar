@@ -1,5 +1,5 @@
 
-# 打发行包：构建前端 + :engine:distZip，拼出 web-dist/data/lib 与启动器，最后打 zip。
+# 打发行包：构建前端 + :engine:distZip，拼出 web/data/lib 与启动器，最后打 zip。
 param(
     [switch]$SkipWebBuild,
     [switch]$KeepClientLibs,
@@ -7,7 +7,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$root = $PSScriptRoot
+$root = Split-Path -Parent $PSScriptRoot
 Set-Location $root
 $version = (Select-String -Path (Join-Path $root "dump-mod\gradle.properties") -Pattern "^version=").Line.Split("=")[1].Trim()
 
@@ -34,8 +34,9 @@ try {
 }
 New-Item -ItemType Directory -Force -Path $out | Out-Null
 
-$zip = Get-ChildItem (Join-Path $root "engine\build\distributions") -Filter "*.zip" |
+$zip = Get-ChildItem (Join-Path $root "engine\build\distributions") -Filter "engine.zip" |
     Sort-Object LastWriteTime | Select-Object -Last 1
+if (-not $zip) { throw "engine.zip not found - check :engine:distZip output" }
 Expand-Archive -Path $zip.FullName -DestinationPath $out -Force
 
 $libPath = Join-Path $out (Join-Path $zip.BaseName 'lib')
@@ -72,7 +73,7 @@ if (-not $KeepClientLibs) {
     }
 }
 
-Copy-Item (Join-Path $root "web\dist") -Destination (Join-Path $out "web-dist") -Recurse -Force
+Copy-Item (Join-Path $root "web\dist") -Destination (Join-Path $out "web") -Recurse -Force
 Copy-Item (Join-Path $root "data") -Destination (Join-Path $out "data") -Recurse -Force
 
 $libDir = Join-Path $zip.BaseName 'lib'

@@ -4,8 +4,8 @@ import dev.lootradar.core.version.GameVersion;
 import java.util.List;
 
 /**
- * 一次搜索的输入。{@code radius} 是方块半径（按区块中心距离裁剪）， {@code minCountPerItem} 是每个物品的配额，{@code startOffset}
- * 是宝库/生物 random_sequence 的起始开启或击杀序号，{@code structures} 为空表示不额外过滤来源。
+ * 一次搜索的输入。{@code radius} 是方块半径（按区块中心距离裁剪）， {@code minCountPerItem} 是每个物品每种获取方式的配额，{@code
+ * startOffset} 是宝库/生物 random_sequence 的起始开启或击杀序号，{@code structures} 为空表示不额外过滤来源。
  */
 public record SearchRequest(
         long seed,

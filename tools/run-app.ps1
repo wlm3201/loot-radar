@@ -5,24 +5,25 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-Set-Location $PSScriptRoot
+$root = Split-Path -Parent $PSScriptRoot
+Set-Location $root
 
-$distIndex = Join-Path $PSScriptRoot "web\dist\index.html"
+$distIndex = Join-Path $root "web\dist\index.html"
 $webStale = -not (Test-Path $distIndex)
 if (-not $webStale) {
     $distTime = (Get-Item $distIndex).LastWriteTime
     $webSources = @(
-        Get-ChildItem (Join-Path $PSScriptRoot "web\src") -Recurse -File -ErrorAction SilentlyContinue
-        Get-Item (Join-Path $PSScriptRoot "web\index.html") -ErrorAction SilentlyContinue
-        Get-Item (Join-Path $PSScriptRoot "web\tailwind.config.js") -ErrorAction SilentlyContinue
-        Get-Item (Join-Path $PSScriptRoot "web\vite.config.ts") -ErrorAction SilentlyContinue
-        Get-Item (Join-Path $PSScriptRoot "web\package.json") -ErrorAction SilentlyContinue
+        Get-ChildItem (Join-Path $root "web\src") -Recurse -File -ErrorAction SilentlyContinue
+        Get-Item (Join-Path $root "web\index.html") -ErrorAction SilentlyContinue
+        Get-Item (Join-Path $root "web\tailwind.config.js") -ErrorAction SilentlyContinue
+        Get-Item (Join-Path $root "web\vite.config.ts") -ErrorAction SilentlyContinue
+        Get-Item (Join-Path $root "web\package.json") -ErrorAction SilentlyContinue
     )
     $webStale = $webSources | Where-Object { $_ -and $_.LastWriteTime -gt $distTime } | Select-Object -First 1
 }
 if ($webStale) {
     Write-Host "web\dist missing or stale - building the web UI first (pnpm)..."
-    Push-Location (Join-Path $PSScriptRoot "web")
+    Push-Location (Join-Path $root "web")
     try {
         pnpm install --frozen-lockfile
         pnpm build
@@ -37,7 +38,7 @@ if ($webStale) {
 Write-Host "Building and starting loot-radar on port $Port ..."
 $arguments = "/c gradlew.bat :engine:runApp --no-daemon --args=$Port"
 $process = Start-Process -FilePath "cmd.exe" -ArgumentList $arguments `
-    -WorkingDirectory $PSScriptRoot -PassThru -NoNewWindow
+    -WorkingDirectory $root -PassThru -NoNewWindow
 
 if ($TimeoutSec -gt 0) {
     if (-not $process.WaitForExit($TimeoutSec * 1000)) {

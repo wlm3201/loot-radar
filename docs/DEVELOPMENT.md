@@ -29,7 +29,7 @@
 | `data/<version>/`                                   | `structures.json`、`items.json`，以及 `loot_tables/**` 跨版本覆盖表。                                                       |
 | `dump-mod/`                                         | **独立 Gradle 构建**的 Fabric mod，跑真实服务器产出「真值」JSON。四个版本子项目。                                           |
 | `tools/`                                            | Python / PowerShell 编排脚本：真值采集、覆盖率统计、数据生成、基准、启动与打包。                                            |
-| `package.ps1`、`run-app.ps1`                        | 发行包构建、开发态启动入口。                                                                                                |
+| `tools/package.ps1`、`tools/run-app.ps1`            | 发行包构建、开发态启动入口。                                                                                                |
 
 构建关系：根 `settings.gradle.kts` 只 include `core`、`engine`；`dump-mod` 有自己的
 `settings.gradle` / `gradlew`，`build.gradle.kts` 仅从它的 `gradle.properties` 读版本号。
@@ -53,10 +53,18 @@
 .\gradlew.bat spotlessCheck --offline                 # google-java-format (AOSP) 检查
 .\gradlew.bat spotlessApply --offline                 # 格式化（改 Java 注释后建议执行）
 .\gradlew.bat :engine:runApp --offline --args=8765    # 直接起后端
-.\run-app.ps1                                        # 检测前端产物是否过期 → pnpm build → 起应用并开浏览器
-.\package.ps1                                        # 打 dist/loot-radar-<version>.zip
+.\tools\run-app.ps1                                  # 检测前端产物是否过期 → pnpm build → 起应用并开浏览器
+.\tools\package.ps1                                  # 打 dist/loot-radar-<version>.zip
+.\tools\start-dev.ps1                                # 后端 + Vite dev(5173)，前端改动即时热更新
+.\tools\stop-dev.ps1                                 # 停掉上面两个后台进程
 python tools\verify-rng-reference.py                  # 独立 RNG/放置公式对照（见第 8 节）
 ```
+
+`start-dev.ps1` 会后台起发行包里的后端（8765）和 `web/` 的 `pnpm dev`（5173），
+开发时访问 `http://127.0.0.1:5173`：页面由 Vite 托管、改前端即时热更新，`/api` 由 Vite
+代理到后端。后端不自动开浏览器，避免抢先打开 8765 的静态页面；后端 8765 自身仍会 serve
+发行包页面，开发时不要直接用它访问 UI。日志见 `build\vite-dev.log`，两个进程的 pid 记在
+`build\dev-api.pid` / `build\dev-vite.pid`，用 `stop-dev.ps1` 一并停止（兼容旧版无 pid 的残留）。
 
 切换原生版本编译：`-Pminecraft_version=26.3` 或 `-Pminecraft_version=26.4-snapshot-7`；
 `engine/build.gradle.kts` 会把 `minecraft_version` 的 `.`/`-` 归一化后加入
@@ -74,14 +82,14 @@ python tools\verify-rng-reference.py                  # 独立 RNG/放置公式�
 5. 起 `ApiServer`（端口占用时最多顺延 9 个），自动开浏览器，主线程 `join()`。
 
 数据根查找顺序：`-Dlootradar.data` → 当前目录 `data/` → `../data/` → 从代码位置向上最多 4 层；
-前端根查找 `web-dist`（发行包）或 `web/dist`（开发态）。
+前端根查找 `web`（发行包，含 `assets/`）或 `web/dist`（开发态）。
 
 ### 发行包
 
-`package.ps1` 把 `:engine:distZip` 解包，复制
-`web/dist` → `web-dist`、`data/`，生成要求 JDK 25 的 `Loot Radar.bat`，
+`tools/package.ps1` 把 `:engine:distZip` 解包，复制
+`web/dist` → `web`、`data/`，生成要求 JDK 25 的 `Loot Radar.bat`，
 最后压缩并校验条目数。启动脚本里显式带 `--sun-misc-unsafe-memory-access=allow`。
-`.\package.ps1 -SkipWebBuild -KeepClientLibs` 可跳过前端构建/裁剪，用于对照排查缺类问题。
+`.\tools\package.ps1 -SkipWebBuild -KeepClientLibs` 可跳过前端构建/裁剪，用于对照排查缺类问题。
 
 ## 4. HTTP API 与前端契约
 
@@ -230,7 +238,9 @@ worldSeed
 3. 按距离分带：首带 750 格，之后 `edge = bandEnd + max(750, bandEnd)` 逐带加倍；
    带内候选按距中心距离平方排序；
 4. 固定线程池并行执行 `Work`（矿井/刷怪房因共享状态把并行度限制到 4）；
-5. 每个 Work 产出 `RawHit`，`mergeResult` 扣减每个物品配额并实时推送 `hit` / `progress`；
+5. 每个 Work 产出 `RawHit`，`mergeResult` 按「物品 + 获取方式」扣减独立配额并实时推送
+   `hit` / `progress`；例如唱片 Precipice 同时配置 `vault` 与 `chest` 来源时，宝库序列预测
+   与箱子扫描各自分配 n 个，互不抢占，先跑完的一方不会让另一方提前结束；
 6. 全部配额达标、单物品 `itemBudgetSeconds` 耗尽或被取消时结束，生成 `SearchReport`。
 
 `itemBudgetSeconds = 0` 表示不限时；超时或序列 2000 次未命中会写入 `warnings`（UI 标 ⚠️）。

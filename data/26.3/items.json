@@ -758,6 +758,13 @@
             "minecraft:trial_chambers"
           ],
           "method": "vault"
+        },
+        {
+          "label": "试炼密室箱子",
+          "structures": [
+            "minecraft:trial_chambers"
+          ],
+          "method": "chest"
         }
       ]
     },

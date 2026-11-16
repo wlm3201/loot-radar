@@ -1,23 +1,21 @@
 import { useMemo, useState } from 'react'
 import type { SearchHit } from '../types'
 import {
-  DIMENSION_LABELS,
-  METHOD_LABELS,
-  STRUCTURE_MERGE_LABELS,
+  METHOD_ORDER,
   denseInstanceRanks,
   hitKey,
   mergeSameLocation,
-  sourceLabel,
   structureGroupKey,
   structureGroupNanos,
 } from '../types'
+import { useI18n } from '../i18n'
 
 // 结果表：按物品或结构分组，合并同坐标命中，并展示配额、耗时与「第 N 次」序列信息。
 interface Props {
   hits: SearchHit[]
   mode: 'item' | 'structure'
   itemIds: string[]
-  itemZhNames: Map<string, string>
+  itemNames: Map<string, string>
   itemDurationNanos: Record<string, number>
   costNanosPerItem: Record<string, number>
   elapsedNanosPerStructure: Record<string, number>
@@ -46,7 +44,8 @@ const HEADER_BTN =
   'w-full text-left px-0 py-0 border-0 rounded-none shadow-none hover:bg-ink-700 hover:border-transparent active:bg-ink-700'
 
 function MethodBadges({ methods }: { methods: string[] }) {
-  const order = Object.keys(METHOD_LABELS)
+  const { methodLabel } = useI18n()
+  const order: readonly string[] = METHOD_ORDER
   // 未知 method 的 indexOf 为 -1，必须排到已知标签之后，否则会跑到最前面。
   const rank = (method: string) => {
     const index = order.indexOf(method)
@@ -56,7 +55,7 @@ function MethodBadges({ methods }: { methods: string[] }) {
     ...new Set(
       methods
         .sort((a, b) => rank(a) - rank(b))
-        .map((m) => METHOD_LABELS[m] ?? m),
+        .map((m) => methodLabel(m)),
     ),
   ]
   return (
@@ -67,6 +66,7 @@ function MethodBadges({ methods }: { methods: string[] }) {
 }
 
 function CoordsCell({ hit }: { hit: SearchHit }) {
+  const { t } = useI18n()
   const [flash, setFlash] = useState<string | null>(null)
   const coords = `${hit.x} ${hit.y} ${hit.z}`
   const copy = (text: string, label: string) => {
@@ -74,14 +74,24 @@ function CoordsCell({ hit }: { hit: SearchHit }) {
     setFlash(label)
     window.setTimeout(() => setFlash(null), 900)
   }
+  // 宝库/生物序列在扫到真实锚点前坐标退化为搜索中心，展示出来会误导为「0 64 0 0格」。
+  if (hit.estimated) {
+    return (
+      <span
+        className="font-mono text-right text-[#64748B] truncate"
+      >
+        —
+      </span>
+    )
+  }
   return (
     <span
       className="font-mono cursor-pointer hover:text-white text-[#94A3B8] truncate text-right"
-      title="左键复制 x y z，右键复制 /tp"
-      onClick={() => copy(coords, '已复制')}
+      title={t('results.copyTip')}
+      onClick={() => copy(coords, t('results.copied'))}
       onContextMenu={(e) => {
         e.preventDefault()
-        copy(`/tp ${coords}`, '已复制 /tp')
+        copy(`/tp ${coords}`, t('results.copiedTp'))
       }}
     >
       {flash ?? coords}
@@ -106,6 +116,7 @@ function HitRow({
   centerZ: number
   rank?: number
 }) {
+  const { t, itemName, dimensionLabel, sourceLabel } = useI18n()
   const key = hitKey(hit)
   const isMarked = marked.has(key)
   return (
@@ -126,17 +137,17 @@ function HitRow({
         )}
         <span className="text-[#94A3B8] truncate">
           {mode === 'item'
-            ? `${DIMENSION_LABELS[hit.dimension] ?? hit.dimension} · ${sourceLabel(hit)}`
-            : hit.itemZhName}
+            ? `${dimensionLabel(hit.dimension)} · ${sourceLabel(hit)}`
+            : itemName(hit.itemId, hit.itemZhName)}
         </span>
         {mode === 'structure' && rank !== undefined && rank > 0 && (
-          <span className="text-accent shrink-0" title="第几处该结构">
+          <span className="text-accent shrink-0" title={t('results.instanceRankTip')}>
             #{rank}
           </span>
         )}
         {hit.nth >= 0 && (
-          <span className="shrink-0 text-[#94A3B8]" title="第几次开启/击杀">
-            · 第{hit.nth}次
+          <span className="shrink-0 text-[#94A3B8]" title={t('results.nthTip')}>
+            {t('results.nth', { count: hit.nth })}
           </span>
         )}
       </span>
@@ -147,12 +158,18 @@ function HitRow({
         {formatSeconds(hit.workNanos)}
       </span>
       <CoordsCell hit={hit} />
-      <span className="text-right text-[#64748B]">
-        {Math.round(Math.hypot(hit.x - centerX, hit.z - centerZ))}格
+      <span
+        className="text-right text-[#64748B]"
+      >
+        {hit.estimated
+          ? '—'
+          : t('results.distance', {
+              count: Math.round(Math.hypot(hit.x - centerX, hit.z - centerZ)),
+            })}
       </span>
       <button
         type="button"
-        title={isMarked ? '取消标记' : '标记为已获取'}
+        title={isMarked ? t('results.unmark') : t('results.mark')}
         onClick={() => onToggleMark(key)}
         className={
           'justify-self-start px-1 py-0.5 text-xs ' +
@@ -171,9 +188,8 @@ export function ResultTable({
   hits,
   mode,
   itemIds,
-  itemZhNames,
+  itemNames,
   itemDurationNanos,
-  costNanosPerItem,
   elapsedNanosPerStructure,
   foundPerItem,
   quota,
@@ -183,6 +199,7 @@ export function ResultTable({
   centerX,
   centerZ,
 }: Props) {
+  const { t, itemName, sourceLabel } = useI18n()
   const [expanded, setExpanded] = useState<Set<string>>(new Set())
   const ranks = useMemo(() => denseInstanceRanks(hits), [hits])
 
@@ -232,33 +249,38 @@ export function ResultTable({
     <div className="panel p-2 h-full flex flex-col min-h-0">
       <div className="flex items-center gap-2 pb-1.5 text-xs shrink-0">
         <span className="text-[#94A3B8]">
-          {mode === 'item' ? `物品 ${groups.size}` : `结构 ${groups.size}`}
+          {mode === 'item'
+            ? t('results.itemsCount', { count: groups.size })
+            : t('results.structuresCount', { count: groups.size })}
         </span>
         <button
           type="button"
           className="ml-auto px-2 py-0.5"
           onClick={() => setExpanded(new Set(groups.keys()))}
         >
-          全部展开
+          {t('results.expandAll')}
         </button>
         <button type="button" className="px-2 py-0.5" onClick={() => setExpanded(new Set())}>
-          全部折叠
+          {t('results.collapseAll')}
         </button>
       </div>
       <div className="overflow-y-auto overflow-x-hidden min-h-0">
         {groups.size === 0 && (
-          <div className="text-[#94A3B8] text-sm p-4">暂无结果，点击左侧「开始搜索」。</div>
+          <div className="text-[#94A3B8] text-sm p-4">{t('results.empty')}</div>
         )}
         {[...groups.entries()].map(([key, groupHits]) => {
           const first = groupHits[0]
           const open = expanded.has(key)
           const isItem = mode === 'item'
           const title = isItem
-            ? (itemZhNames.get(key) ?? first?.itemZhName ?? key)
-            : (STRUCTURE_MERGE_LABELS[key] ??
-              sourceLabel(first ?? { method: 'chest', structureZhName: key }) ??
-              key)
-          const subtitle = isItem ? '' : [...new Set(groupHits.map((h) => h.itemZhName))].join('、')
+            ? (itemNames.get(key) ??
+              (first ? itemName(first.itemId, first.itemZhName) : key))
+            : sourceLabel(first ?? { method: 'chest', structureZhName: key, structureId: key })
+          const subtitle = isItem
+            ? ''
+            : [...new Set(groupHits.map((h) => itemName(h.itemId, h.itemZhName)))].join(
+                t('results.subtitleJoin'),
+              )
           const total = groupHits.reduce((sum, h) => sum + h.count, 0)
           const found = isItem ? (foundPerItem[key] ?? 0) : 0
           const done = isItem && found >= quota

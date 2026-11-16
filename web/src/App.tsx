@@ -4,26 +4,34 @@ import {
   fetchActive,
   fetchCatalog,
   fetchVersions,
+  shutdownApp,
   startSearch,
   streamSearch,
 } from './api'
 import type { Catalog, SearchHit, SearchProgress, SearchReport, SearchRequest } from './types'
+import { useI18n } from './i18n'
 import { ItemPicker } from './components/ItemPicker'
 import { MapView } from './components/MapView'
 import { ResultTable } from './components/ResultTable'
 import { SearchForm } from './components/SearchForm'
-import { StatusBar } from './components/StatusBar'
+import { SearchStatus } from './components/SearchStatus'
 
 type ViewMode = 'item' | 'structure' | 'map'
 
 // 状态中枢：目录/版本/物品选择、搜索会话与 SSE 事件流都在这里汇聚后分发给各视图。
-export default function App() {
+function AppInner() {
+  const { t, locale, setLocale, itemName } = useI18n()
   const [catalog, setCatalog] = useState<Catalog | null>(null)
   const [versions, setVersions] = useState<string[]>(['26.2'])
   const [version, setVersion] = useState<string>('26.2')
   const [selected, setSelected] = useState<string[]>([])
   const [view, setView] = useState<ViewMode>('item')
   const [hits, setHits] = useState<SearchHit[]>([])
+  // hit 包自带累计扫描统计，收到即更新状态栏，无需等 progress/done。
+  const [hitStats, setHitStats] = useState<{
+    structuresScanned: number
+    containersReplayed: number
+  } | null>(null)
   const [progress, setProgress] = useState<SearchProgress | null>(null)
   const [report, setReport] = useState<SearchReport | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -65,10 +73,15 @@ export default function App() {
     setStartedAt(Date.now())
     setRunning(!initialFinished)
     setCancelled(false)
+    setHitStats(null)
     closeStream.current = streamSearch(id, {
       onHit: (hit) => {
         setError(null)
         setHits((current) => [...current, hit])
+        setHitStats({
+          structuresScanned: hit.structuresScanned,
+          containersReplayed: hit.containersReplayed,
+        })
       },
       onProgress: (value) => {
         setError(null)
@@ -82,7 +95,7 @@ export default function App() {
         setError(message)
         setRunning(false)
       },
-      onDisconnect: (message) => setError(message),
+      onDisconnect: () => setError(t('api.disconnected')),
     })
   }
 
@@ -135,12 +148,21 @@ export default function App() {
     const timer = window.setInterval(() => setNow(Date.now()), 200)
     return () => window.clearInterval(timer)
   }, [running])
+
+  // 全局禁用浏览器右键菜单；结果/雷达里的右键复制（/tp）在各自元素内处理，不受影响。
+  useEffect(() => {
+    const suppressMenu = (e: MouseEvent) => e.preventDefault()
+    document.addEventListener('contextmenu', suppressMenu)
+    return () => document.removeEventListener('contextmenu', suppressMenu)
+  }, [])
   useEffect(() => {
     if (!running && startedAt > 0) setNow(Date.now())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running])
 
   const elapsedNanos = startedAt > 0 ? (now - startedAt) * 1_000_000 : 0
+  // 优先用最后一次命中携带的累计值；无命中时用 progress/report 兜底。
+  const scanStats = report ?? hitStats ?? progress
 
   const runSearch = (next: SearchRequest) => {
     setHits([])
@@ -168,24 +190,27 @@ export default function App() {
     setCancelled(true)
   }
 
-  const itemZhNames = useMemo(() => {
+  const itemNames = useMemo(() => {
     const map = new Map<string, string>()
-    catalog?.items.forEach((item) => map.set(item.id, item.zhName))
+    catalog?.items.forEach((item) => map.set(item.id, itemName(item.id, item.zhName)))
     return map
-  }, [catalog])
+  }, [catalog, itemName])
 
   if (!catalog) {
     return (
       <div className="p-6 flex flex-col gap-3 items-start">
         {loadError ? (
           <>
-            <span className="text-bad">无法连接后端：{loadError}</span>
+            <span className="text-bad">
+              {t('app.loadError')}
+              {loadError}
+            </span>
             <button type="button" onClick={() => window.location.reload()}>
-              重试连接
+              {t('app.retry')}
             </button>
           </>
         ) : (
-          <span className="text-[#94A3B8]">加载目录中…</span>
+          <span className="text-[#94A3B8]">{t('app.loading')}</span>
         )}
       </div>
     )
@@ -195,12 +220,39 @@ export default function App() {
     <div className="h-full flex flex-col gap-2 p-2">
       <header className="panel px-4 py-2 flex items-center gap-3">
         <span className="text-accent font-bold text-lg">Loot Radar</span>
-        <span className="text-[#94A3B8] text-xs">Minecraft 26.x 战利品查找器</span>
-        {request && (
-          <span className="ml-auto text-xs text-[#94A3B8]">
-            种子 {request.seed} · 中心 {request.centerX},{request.centerZ} · 范围 {request.radius}
-          </span>
-        )}
+        <span className="text-[#94A3B8] text-xs">{t('app.tagline')}</span>
+        <div className="ml-auto flex items-center gap-3">
+          {request && (
+            <span className="text-xs text-[#94A3B8]">
+              {t('app.searchSummary', {
+                seed: request.seed,
+                x: request.centerX,
+                z: request.centerZ,
+                radius: request.radius,
+              })}
+            </span>
+          )}
+          <button
+            type="button"
+            className="text-xs px-2 py-0.5"
+            title="Language / 语言"
+            onClick={() => setLocale(locale === 'zh' ? 'en' : 'zh')}
+          >
+            {locale === 'zh' ? 'EN' : '中文'}
+          </button>
+          <button
+            type="button"
+            className="text-xs px-2 py-0.5 text-[#94A3B8] hover:text-bad"
+            title={t('status.exitTip')}
+            onClick={() => {
+              if (window.confirm(t('status.exitConfirm'))) {
+                void shutdownApp().then(() => window.close())
+              }
+            }}
+          >
+            {t('status.exit')}
+          </button>
+        </div>
       </header>
 
       <div className="flex-1 grid grid-cols-[300px_minmax(260px,370px)_1fr] gap-2 min-h-0">
@@ -223,12 +275,12 @@ export default function App() {
         </div>
 
         <div className="flex flex-col gap-2 min-h-0">
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             {(
               [
-                ['item', '物品'],
-                ['structure', '结构'],
-                ['map', '雷达'],
+                ['item', t('app.viewItems')],
+                ['structure', t('app.viewStructures')],
+                ['map', t('app.viewMap')],
               ] as const
             ).map(([mode, label]) => (
               <button
@@ -240,9 +292,21 @@ export default function App() {
                 {label}
               </button>
             ))}
-            <span className="ml-auto text-xs text-[#94A3B8] self-center">
-              命中 {hits.length} 条
-            </span>
+            <div className="ml-auto flex items-center gap-2">
+              <SearchStatus
+                running={running}
+                report={report}
+                error={error}
+                // 结束后以服务端报告为准；搜索中才用本地计时，避免刷新恢复后显示错误耗时。
+                totalElapsedNanos={report?.totalElapsedNanos ?? elapsedNanos}
+                structuresScanned={scanStats?.structuresScanned ?? 0}
+                containersReplayed={scanStats?.containersReplayed ?? 0}
+                cancelled={cancelled}
+              />
+              <span className="text-xs text-[#94A3B8] whitespace-nowrap">
+                {t('app.hits', { count: hits.length })}
+              </span>
+            </div>
           </div>
 
           <div className="flex-1 min-h-0">
@@ -260,7 +324,7 @@ export default function App() {
                 hits={hits}
                 mode={view === 'item' ? 'item' : 'structure'}
                 itemIds={request?.itemIds ?? []}
-                itemZhNames={itemZhNames}
+                itemNames={itemNames}
                 itemDurationNanos={
                   report?.itemDurationNanos ?? progress?.itemDurationNanos ?? {}
                 }
@@ -278,17 +342,10 @@ export default function App() {
               />
             )}
           </div>
-
-          <StatusBar
-            running={running}
-            report={report}
-            error={error}
-            // 结束后以服务端报告为准；搜索中才用本地计时，避免刷新恢复后显示错误耗时。
-            totalElapsedNanos={report?.totalElapsedNanos ?? elapsedNanos}
-            cancelled={cancelled}
-          />
         </div>
       </div>
     </div>
   )
 }
+
+export default AppInner

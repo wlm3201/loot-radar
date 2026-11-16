@@ -1,6 +1,6 @@
-import { structureFilterLabel } from '../types'
+import { useI18n } from '../i18n'
 
-// 结构过滤器：按中文名合并暖水/冷水海底废墟、沉船等同类结构，整组开关。
+// 结构过滤器：按显示名合并暖水/冷水海底废墟、沉船等同类结构，整组开关。
 interface Props {
   candidates: string[]
   names: Record<string, string>
@@ -10,11 +10,12 @@ interface Props {
 }
 
 export function StructureFilter({ candidates, names, excluded, forced, onToggle }: Props) {
+  const { t, structureName, structureFilterLabel } = useI18n()
   if (candidates.length === 0) return null
   const groups: { label: string; ids: string[] }[] = []
   const byLabel = new Map<string, { label: string; ids: string[] }>()
   for (const id of candidates) {
-    const label = structureFilterLabel(names[id] ?? id)
+    const label = structureFilterLabel(structureName(id, names[id]))
     let group = byLabel.get(label)
     if (!group) {
       group = { label, ids: [] }
@@ -25,7 +26,7 @@ export function StructureFilter({ candidates, names, excluded, forced, onToggle 
   }
   return (
     <div className="flex flex-col gap-1">
-      <span className="text-xs text-[#94A3B8]">候选结构</span>
+      <span className="text-xs text-[#94A3B8]">{t('filter.title')}</span>
       <div className="flex flex-wrap gap-1">
         {groups.map((group) => {
           const on = group.ids.some((id) => !excluded.has(id))
@@ -38,10 +39,10 @@ export function StructureFilter({ candidates, names, excluded, forced, onToggle 
               onClick={() => onToggle(group.ids)}
               title={
                 locked
-                  ? `${group.label}：所选物品中有仅剩此来源的，不可取消`
+                  ? t('filter.lockedTip', { label: group.label })
                   : on
-                    ? `点击取消搜索${group.label}`
-                    : `点击恢复搜索${group.label}`
+                    ? t('filter.excludeTip', { label: group.label })
+                    : t('filter.includeTip', { label: group.label })
               }
               className={
                 'px-2 py-0.5 rounded text-xs border ' +

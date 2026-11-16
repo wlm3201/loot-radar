@@ -2,6 +2,7 @@ package dev.lootradar.engine.search;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -270,6 +271,52 @@ class SearchEngineTest {
     }
 
     @Test
+    void precipiceSearchesVaultAndChestIndependently() {
+        SearchRequest request =
+                new SearchRequest(
+                        0L,
+                        GameVersion.V26_2,
+                        0,
+                        0,
+                        3000,
+                        1,
+                        0,
+                        1,
+                        true,
+                        List.of("minecraft:music_disc_precipice"),
+                        5,
+                        List.of());
+        List<SearchHit> hits = new ArrayList<>();
+        SearchReport report =
+                engine.search(
+                        request,
+                        new SearchEngine.Listener() {
+                            @Override
+                            public void onHit(SearchHit hit) {
+                                hits.add(hit);
+                            }
+
+                            @Override
+                            public void onProgress(SearchProgress progress) {}
+                        },
+                        new AtomicBoolean(false));
+        long vault = hits.stream().filter(h -> h.method().id.equals("vault")).count();
+        long chest = hits.stream().filter(h -> h.method().id.equals("chest")).count();
+        assertEquals(1, vault, "vault quota is independent of chest, hits=" + hits);
+        assertEquals(1, chest, "chest quota is independent of vault, hits=" + hits);
+        assertTrue(report.completed(), "both source quotas should be met, report=" + report);
+        SearchHit vaultHit =
+                hits.stream().filter(h -> h.method().id.equals("vault")).findFirst().orElseThrow();
+        SearchHit chestHit =
+                hits.stream().filter(h -> h.method().id.equals("chest")).findFirst().orElseThrow();
+        assertEquals(0, vaultHit.containersReplayed(), "vault sequence runs before structure scan");
+        assertTrue(chestHit.containersReplayed() > 0, "chest hit carries scan stats, hits=" + hits);
+        assertTrue(
+                chestHit.structuresScanned() > 0,
+                "chest hit carries structure count, hits=" + hits);
+    }
+
+    @Test
     void stopEarlyWhenQuotaMet() {
         SearchRequest request =
                 new SearchRequest(
@@ -309,5 +356,43 @@ class SearchEngineTest {
         assertTrue(
                 report.foundPerItem().get("minecraft:dune_armor_trim_smithing_template") >= 1,
                 "quota should be met, found=" + report.foundPerItem());
+    }
+
+    @Test
+    void itemCostNeverExceedsWallTimeWithParallelWorkers() {
+        String itemId = "minecraft:music_disc_otherside";
+        SearchRequest request =
+                new SearchRequest(
+                        0L,
+                        GameVersion.V26_2,
+                        0,
+                        0,
+                        3000,
+                        10,
+                        0,
+                        1,
+                        true,
+                        List.of(itemId),
+                        3,
+                        List.of("minecraft:monster_room"));
+        SearchReport report =
+                engine.search(
+                        request,
+                        new SearchEngine.Listener() {
+                            @Override
+                            public void onHit(SearchHit hit) {}
+
+                            @Override
+                            public void onProgress(SearchProgress progress) {}
+                        },
+                        new AtomicBoolean(false));
+        Long cost = report.costNanosPerItem().get(itemId);
+        assertNotNull(cost);
+        assertTrue(
+                cost <= report.totalElapsedNanos(),
+                "parallel work durations must not multiply the item budget: cost="
+                        + cost
+                        + " wall="
+                        + report.totalElapsedNanos());
     }
 }

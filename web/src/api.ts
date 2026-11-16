@@ -41,7 +41,8 @@ export interface SearchCallbacks {
   onDone: (report: SearchReport) => void
   onError: (message: string) => void
   // 无 data 的 error 是网络级断连；EventSource 仍会自动重连，这里只提示不关闭。
-  onDisconnect?: (message: string) => void
+  // 提示文案由调用方按当前语言给出。
+  onDisconnect?: () => void
 }
 
 // 服务端缓存全部事件并支持 Last-Event-ID 续传；这里只处理带 data 的业务错误，
@@ -65,7 +66,7 @@ export function streamSearch(searchId: number, callbacks: SearchCallbacks): () =
       callbacks.onError(payload.message)
       source.close()
     } else {
-      callbacks.onDisconnect?.('与后端连接中断，正在自动重连…')
+      callbacks.onDisconnect?.()
     }
   })
   return () => source.close()

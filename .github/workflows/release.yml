@@ -38,7 +38,7 @@ jobs:
         run: .\gradlew.bat :engine:test --no-daemon
 
       - name: Package
-        run: powershell -ExecutionPolicy Bypass -File package.ps1 -SkipWebBuild
+        run: powershell -ExecutionPolicy Bypass -File tools/package.ps1 -SkipWebBuild
 
       - name: Create release
         uses: softprops/action-gh-release@v2

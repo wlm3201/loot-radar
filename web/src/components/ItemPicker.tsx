@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { Catalog, ItemDef } from '../types'
+import { useI18n } from '../i18n'
 
 // 物品多选：按 items.json 的 group 分组，默认选中项由 group.defaultSelected 决定。
 interface Props {
@@ -9,15 +10,20 @@ interface Props {
 }
 
 export function ItemPicker({ catalog, selected, onChange }: Props) {
+  const { t, itemName, groupName } = useI18n()
   const [query, setQuery] = useState('')
   const selectedSet = useMemo(() => new Set(selected), [selected])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     return catalog.items.filter(
-      (item) => q === '' || item.id.toLowerCase().includes(q) || item.zhName.includes(q),
+      (item) =>
+        q === '' ||
+        item.id.toLowerCase().includes(q) ||
+        item.zhName.toLowerCase().includes(q) ||
+        itemName(item.id, item.zhName).toLowerCase().includes(q),
     )
-  }, [catalog.items, query])
+  }, [catalog.items, query, itemName])
 
   const byGroup = useMemo(() => {
     const map = new Map<string, ItemDef[]>()
@@ -50,13 +56,13 @@ export function ItemPicker({ catalog, selected, onChange }: Props) {
       <div className="flex items-center gap-2">
         <input
           type="text"
-          placeholder="搜索物品（中文名或 ID）"
+          placeholder={t('picker.searchPlaceholder')}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="flex-1"
         />
         <button type="button" className="text-xs text-bad" onClick={() => onChange([])}>
-          清空选择
+          {t('picker.clear')}
         </button>
       </div>
       <div className="flex flex-col gap-2 overflow-y-auto pr-1">
@@ -69,7 +75,7 @@ export function ItemPicker({ catalog, selected, onChange }: Props) {
               <div className="flex items-center justify-between mb-1">
                 <button
                   type="button"
-                  title="点击全选，再次点击全取消"
+                  title={t('picker.groupToggleTip')}
                   className={
                     'badge cursor-pointer select-none ' +
                     (groupSelected === 0
@@ -80,7 +86,11 @@ export function ItemPicker({ catalog, selected, onChange }: Props) {
                   }
                   onClick={() => toggleGroup(group.id)}
                 >
-                  {group.zhName}（{groupSelected}/{items.length}）
+                  {t('picker.groupCount', {
+                    name: groupName(group.id, group.zhName),
+                    selected: groupSelected,
+                    total: items.length,
+                  })}
                 </button>
               </div>
               <div className="flex flex-wrap gap-1">
@@ -107,7 +117,7 @@ export function ItemPicker({ catalog, selected, onChange }: Props) {
                           ;(e.target as HTMLImageElement).style.display = 'none'
                         }}
                       />
-                      {item.zhName}
+                      {itemName(item.id, item.zhName)}
                     </button>
                   )
                 })}

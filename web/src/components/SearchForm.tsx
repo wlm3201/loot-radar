@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { ItemDef, SearchRequest } from '../types'
-import { structureFilterLabel } from '../types'
+import { useI18n } from '../i18n'
 import { StructureFilter } from './StructureFilter'
 
 // 搜索参数表单。structures 是「候选结构 - 用户排除」的白名单，交给后端做来源过滤。
@@ -27,6 +27,7 @@ export function SearchForm({
   items,
   structureNames,
 }: Props) {
+  const { t, structureName, structureFilterLabel } = useI18n()
   const [seed, setSeed] = useState('0')
   const [centerX, setCenterX] = useState('0')
   const [centerZ, setCenterZ] = useState('0')
@@ -76,7 +77,7 @@ export function SearchForm({
       for (const source of byId.get(id)?.sources ?? []) {
         for (const structure of source.structures) {
           if (excludedStructures.has(structure)) continue
-          const label = structureFilterLabel(structureNames[structure] ?? structure)
+          const label = structureFilterLabel(structureName(structure, structureNames[structure]))
           const members = groups.get(label) ?? []
           members.push(structure)
           groups.set(label, members)
@@ -89,7 +90,7 @@ export function SearchForm({
       }
     }
     return out
-  }, [byId, itemIds, excludedStructures, structureNames])
+  }, [byId, itemIds, excludedStructures, structureNames, structureName, structureFilterLabel])
   const toggleStructure = (ids: string[]) => {
     setExcludedStructures((current) => {
       const next = new Set(current)
@@ -135,19 +136,19 @@ export function SearchForm({
     <div className="panel p-3 flex flex-col gap-3 flex-1">
       <div className="grid grid-cols-2 gap-2">
         <label className="flex flex-col gap-1 col-span-2">
-          <span className="text-xs text-[#94A3B8]">世界种子</span>
+          <span className="text-xs text-[#94A3B8]">{t('form.seed')}</span>
           <input type="text" value={seed} onChange={(e) => setSeed(e.target.value)} />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-[#94A3B8]">中心 X</span>
+          <span className="text-xs text-[#94A3B8]">{t('form.centerX')}</span>
           <input type="number" value={centerX} onChange={(e) => setCenterX(e.target.value)} />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-[#94A3B8]">中心 Z</span>
+          <span className="text-xs text-[#94A3B8]">{t('form.centerZ')}</span>
           <input type="number" value={centerZ} onChange={(e) => setCenterZ(e.target.value)} />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-[#94A3B8]">游戏版本</span>
+          <span className="text-xs text-[#94A3B8]">{t('form.version')}</span>
           <select
             value={version}
             onChange={(e) => onVersionChange(e.target.value)}
@@ -161,11 +162,11 @@ export function SearchForm({
           </select>
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-[#94A3B8]">每物品数量</span>
+          <span className="text-xs text-[#94A3B8]">{t('form.minCount')}</span>
           <input type="number" value={minCount} onChange={(e) => setMinCount(e.target.value)} />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-[#94A3B8]">初始宝库/击杀次数</span>
+          <span className="text-xs text-[#94A3B8]">{t('form.startOffset')}</span>
           <input
             type="number"
             value={startOffset}
@@ -173,7 +174,7 @@ export function SearchForm({
           />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-[#94A3B8]">抢夺等级</span>
+          <span className="text-xs text-[#94A3B8]">{t('form.looting')}</span>
           <select
             value={looting}
             onChange={(e) => setLooting(e.target.value)}
@@ -186,26 +187,22 @@ export function SearchForm({
           </select>
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-[#94A3B8]">最大范围</span>
+          <span className="text-xs text-[#94A3B8]">{t('form.radius')}</span>
           <input type="number" value={radius} onChange={(e) => setRadius(e.target.value)} />
         </label>
         <label className="flex flex-col gap-1">
-          <span className="text-xs text-[#94A3B8]">每物品超时</span>
+          <span className="text-xs text-[#94A3B8]">{t('form.itemBudget')}</span>
           <input
             type="number"
             value={itemBudget}
             onChange={(e) => setItemBudget(e.target.value)}
-            title="单个物品的累计搜索时间上限"
+            title={t('form.itemBudgetTip')}
           />
         </label>
       </div>
 
-      {!seedValid && <span className="text-warn text-xs">请输入 64 位有符号整数种子</span>}
-      {!fieldsValid && (
-        <span className="text-warn text-xs">
-          参数需为整数：范围 1~500000、数量 1~9999、中心 ±30000000、起始 1~100000、超时 0~86400
-        </span>
-      )}
+      {!seedValid && <span className="text-warn text-xs">{t('form.seedInvalid')}</span>}
+      {!fieldsValid && <span className="text-warn text-xs">{t('form.fieldsInvalid')}</span>}
 
       <StructureFilter
         candidates={candidates}
@@ -222,11 +219,11 @@ export function SearchForm({
           disabled={running || itemIds.length === 0 || !seedValid || !fieldsValid}
           className="bg-accent-dark border-accent-deep font-semibold flex-1"
         >
-          {running ? '搜索中…' : `开始搜索（${itemIds.length} 项）`}
+          {running ? t('form.searching') : t('form.start', { count: itemIds.length })}
         </button>
         {running && (
           <button type="button" onClick={onCancel} className="border-bad text-bad">
-            停止
+            {t('form.stop')}
           </button>
         )}
       </div>

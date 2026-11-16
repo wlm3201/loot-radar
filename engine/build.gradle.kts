@@ -26,6 +26,10 @@ application {
     mainClass = "dev.lootradar.app.Main"
 }
 
+tasks.named<Zip>("distZip") {
+    archiveVersion.set("")
+}
+
 // Compile native API bindings against the actual Minecraft version, never mix
 // 26.2 worldgen code with a 26.3 data catalog during coverage experiments.
 // Snapshot builds ("26.4-snapshot-7") share the release's adapter (mc26_4).

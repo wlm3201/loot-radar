@@ -8,6 +8,8 @@ const apiPort = Number(env?.LOOTRADAR_PORT ?? 8765)
 
 export default defineConfig({
   server: {
+    // 固定 IPv4：Windows 上默认 localhost 可能只监听 ::1，导致 127.0.0.1:5173 打不开。
+    host: '127.0.0.1',
     port: 5173,
     proxy: {
       '/api': `http://127.0.0.1:${Number.isFinite(apiPort) ? apiPort : 8765}`,

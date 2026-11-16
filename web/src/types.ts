@@ -1,7 +1,3 @@
-export function structureFilterLabel(name: string): string {
-  return name.replace(/（[^（）]*）$/, '').replace(/^(暖水|冷水)/, '')
-}
-
 export interface ItemSource {
   label: string
   structures: string[]
@@ -74,6 +70,8 @@ export interface SearchHit {
   elapsedNanos: number
   worldSeed: number
   workNanos: number
+  structuresScanned: number
+  containersReplayed: number
 }
 
 export interface SearchProgress {
@@ -103,55 +101,29 @@ export interface SearchReport {
 }
 
 // 与 core/LootMethod.id 一一对应；后端 Gson 把枚举序列化为 id 字符串。
-export const METHOD_LABELS: Record<string, string> = {
-  chest: '箱子',
-  archaeology: '考古',
-  pot_sherd: '陶罐',
-  corridor_pot: '柱廊陶罐',
-  vault: '宝库',
-  vault_ominous: '不祥宝库',
-  entity: '远古守卫者',
-}
+// 展示标签见 i18n/messages.ts，这里只保留徽章排序与结构分组逻辑。
+export const METHOD_ORDER = [
+  'chest',
+  'archaeology',
+  'pot_sherd',
+  'corridor_pot',
+  'vault',
+  'vault_ominous',
+  'entity',
+] as const
 
-export const DIMENSION_LABELS: Record<string, string> = {
-  overworld: '主世界',
-  the_nether: '下界',
-  the_end: '末地',
-}
-
-export const SEQUENCE_LABELS: Record<string, string> = {
-  entity: '远古守卫者',
-  vault: '宝库',
-  vault_ominous: '不祥宝库',
-}
-
-export function sourceLabel(hit: {
-  method: string
-  structureZhName: string
-  structureId?: string
-}): string {
-  const merged = hit.structureId
-    ? STRUCTURE_MERGE_LABELS[STRUCTURE_MERGES[hit.structureId] ?? hit.structureId]
-    : undefined
-  return SEQUENCE_LABELS[hit.method] ?? merged ?? hit.structureZhName
-}
+export const SEQUENCE_METHODS = new Set(['entity', 'vault', 'vault_ominous'])
 
 export function structureGroupKey(hit: SearchHit): string {
-  if (SEQUENCE_LABELS[hit.method]) return `seq:${hit.method}`
+  if (SEQUENCE_METHODS.has(hit.method)) return `seq:${hit.method}`
   return STRUCTURE_MERGES[hit.structureId] ?? hit.structureId
 }
 
-const STRUCTURE_MERGES: Record<string, string> = {
+export const STRUCTURE_MERGES: Record<string, string> = {
   'minecraft:ocean_ruin_warm': 'minecraft:ocean_ruin',
   'minecraft:ocean_ruin_cold': 'minecraft:ocean_ruin',
   'minecraft:shipwreck': 'minecraft:shipwreck_all',
   'minecraft:shipwreck_beached': 'minecraft:shipwreck_all',
-}
-
-/** Display name for a merged structure group. */
-export const STRUCTURE_MERGE_LABELS: Record<string, string> = {
-  'minecraft:ocean_ruin': '海底废墟',
-  'minecraft:shipwreck_all': '沉船',
 }
 
 export function structureGroupNanos(

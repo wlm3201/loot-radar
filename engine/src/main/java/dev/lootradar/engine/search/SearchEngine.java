@@ -49,6 +49,19 @@ public final class SearchEngine {
     // 序列型来源最多向前推演 2000 次开启/击杀，命中不到时给出警告而非无限循环。
     private static final int MAX_SEQUENCE_ROLLS = 2000;
 
+    /** 配额粒度为「物品 + 获取方式」：宝库序列与箱子扫描各自独立计数。 */
+    private record QuotaKey(String itemId, LootMethod method) {}
+
+    private static int remainingForItem(Map<QuotaKey, Integer> remaining, String itemId) {
+        int total = 0;
+        for (Map.Entry<QuotaKey, Integer> entry : remaining.entrySet()) {
+            if (entry.getKey().itemId().equals(itemId)) {
+                total += Math.max(0, entry.getValue());
+            }
+        }
+        return total;
+    }
+
     private static long itemBudgetNanos(SearchRequest request) {
         return request.itemBudgetSeconds() == 0
                 ? Long.MAX_VALUE
@@ -58,13 +71,13 @@ public final class SearchEngine {
     private boolean itemBudgetLeft(
             Work work,
             Map<String, ItemDef> targets,
-            Map<String, Integer> remaining,
+            Map<QuotaKey, Integer> remaining,
             SearchRequest request,
             SearchState state) {
         long budget = itemBudgetNanos(request);
         boolean anyLeft = false;
         for (var entry : targets.entrySet()) {
-            if (remaining.getOrDefault(entry.getKey(), 0) <= 0
+            if (remainingForItem(remaining, entry.getKey()) <= 0
                     || !canContain(entry.getValue(), work.structureId())) {
                 continue;
             }
@@ -148,12 +161,14 @@ public final class SearchEngine {
             throw new IllegalArgumentException("Search seed does not match the worldgen runtime");
         }
         long startedAt = System.nanoTime();
-        Map<String, Integer> remaining = new LinkedHashMap<>();
+        Map<QuotaKey, Integer> remaining = new LinkedHashMap<>();
         Map<String, ItemDef> targets = new LinkedHashMap<>();
         for (String itemId : request.itemIds()) {
             ItemDef def = catalog.item(itemId);
             targets.put(itemId, def);
-            remaining.put(itemId, request.minCountPerItem());
+            for (LootMethod method : activeMethods(request, def)) {
+                remaining.put(new QuotaKey(itemId, method), request.minCountPerItem());
+            }
         }
 
         Plan plan = planSources(request, targets);
@@ -215,6 +230,8 @@ public final class SearchEngine {
         ExecutorService pool = Executors.newFixedThreadPool(parallelism);
         try {
             record InFlight(Work work, Future<WorkResult> future) {}
+            // 并行任务的各自耗时相加会按线程数放大预算消耗；统一按两次结果落地之间的真实墙钟时间计费。
+            long lastCompletionNanos = System.nanoTime();
             for (long[] band : bands) {
                 if (cancelled.get() || quotasMet(remaining)) {
                     break;
@@ -222,6 +239,8 @@ public final class SearchEngine {
                 long locateStarted = System.nanoTime();
                 List<Work> works =
                         locate(request, plan, state, targets, remaining, band[0], band[1]);
+                // locate 的耗时已由 attributeLocate 计入，重置基准避免重复计费。
+                lastCompletionNanos = System.nanoTime();
                 works.sort((a, b) -> Long.compare(a.distanceSq(), b.distanceSq()));
                 java.util.ArrayDeque<InFlight> inFlight = new java.util.ArrayDeque<>();
                 java.util.Iterator<Work> queue = works.iterator();
@@ -251,8 +270,12 @@ public final class SearchEngine {
                     }
                     InFlight oldest = inFlight.poll();
                     WorkResult result = await(oldest.future(), state);
+                    long completedAt = System.nanoTime();
+                    long wallNanos = Math.max(0L, completedAt - lastCompletionNanos);
+                    lastCompletionNanos = completedAt;
                     if (result != null) {
-                        mergeResult(request, result, targets, remaining, state, listener);
+                        mergeResult(
+                                request, result, targets, remaining, state, listener, wallNanos);
                     }
                     if (cancelled.get() || quotasMet(remaining)) {
                         break;
@@ -272,17 +295,17 @@ public final class SearchEngine {
         return state.report(complete, cancelled.get(), remaining);
     }
 
-    private static boolean quotasMet(Map<String, Integer> remaining) {
+    private static boolean quotasMet(Map<QuotaKey, Integer> remaining) {
         return remaining.values().stream().allMatch(count -> count <= 0);
     }
 
     private boolean workUseful(
             Work work,
             Map<String, ItemDef> targets,
-            Map<String, Integer> remaining,
+            Map<QuotaKey, Integer> remaining,
             SearchState state) {
         for (Map.Entry<String, ItemDef> entry : targets.entrySet()) {
-            if (remaining.getOrDefault(entry.getKey(), 0) <= 0) {
+            if (remainingForItem(remaining, entry.getKey()) <= 0) {
                 continue;
             }
             for (ItemSource source : entry.getValue().sources()) {
@@ -361,6 +384,25 @@ public final class SearchEngine {
         }
         return new Plan(
                 structureIds, featureIds, needVault, needOminousVault, needElderGuardian, warnings);
+    }
+
+    /** 与 planItem 的来源过滤保持一致，避免为被排除的来源分配永远用不到的配额。 */
+    private static Set<LootMethod> activeMethods(SearchRequest request, ItemDef def) {
+        Set<LootMethod> methods = new LinkedHashSet<>();
+        for (ItemSource source : def.sources()) {
+            if (!request.structures().isEmpty()
+                    && source.structures().stream().noneMatch(request.structures()::contains)) {
+                continue;
+            }
+            methods.add(LootMethod.parse(source.method()));
+        }
+        // 与 planSources 的忽略跳过回退保持一致：全部来源被过滤时仍按完整来源分配配额。
+        if (methods.isEmpty()) {
+            for (ItemSource source : def.sources()) {
+                methods.add(LootMethod.parse(source.method()));
+            }
+        }
+        return methods;
     }
 
     private Plan planItem(SearchRequest request, ItemDef def) {
@@ -456,7 +498,7 @@ public final class SearchEngine {
             Plan plan,
             SearchState state,
             Map<String, ItemDef> targets,
-            Map<String, Integer> remaining,
+            Map<QuotaKey, Integer> remaining,
             long minDistance,
             long maxDistance) {
         List<Work> works = new ArrayList<>();
@@ -545,14 +587,14 @@ public final class SearchEngine {
     private static void attributeLocate(
             SearchState state,
             Map<String, ItemDef> targets,
-            Map<String, Integer> remaining,
+            Map<QuotaKey, Integer> remaining,
             String structureId,
             long nanos) {
         state.addStructureTime(structureId, nanos);
         for (var entry : targets.entrySet()) {
             if (canContain(entry.getValue(), structureId)) {
                 state.advanceItem(entry.getKey(), nanos);
-                if (remaining.getOrDefault(entry.getKey(), 0) > 0) {
+                if (remainingForItem(remaining, entry.getKey()) > 0) {
                     state.costNanosPerItem.merge(entry.getKey(), nanos, Long::sum);
                 }
             }
@@ -571,11 +613,11 @@ public final class SearchEngine {
     private static void attributePhase(
             SearchState state,
             Map<String, ItemDef> targets,
-            Map<String, Integer> remaining,
+            Map<QuotaKey, Integer> remaining,
             long nanos,
             java.util.Set<dev.lootradar.core.search.LootMethod> methods) {
         for (var entry : targets.entrySet()) {
-            if (remaining.getOrDefault(entry.getKey(), 0) <= 0) {
+            if (remainingForItem(remaining, entry.getKey()) <= 0) {
                 continue;
             }
             boolean relevant =
@@ -903,9 +945,10 @@ public final class SearchEngine {
             SearchRequest request,
             WorkResult result,
             Map<String, ItemDef> targets,
-            Map<String, Integer> remaining,
+            Map<QuotaKey, Integer> remaining,
             SearchState state,
-            Listener listener) {
+            Listener listener,
+            long wallNanos) {
         int instanceIndex = 0;
         if (result.scanned()) {
             state.structuresScanned++;
@@ -915,12 +958,12 @@ public final class SearchEngine {
             state.failedCounts.merge(result.structureId(), 1, Integer::sum);
         }
         state.containersReplayed += result.containersReplayed();
-        state.addStructureTime(result.structureId(), result.timedNanos());
+        state.addStructureTime(result.structureId(), wallNanos);
         for (var entry : targets.entrySet()) {
             if (canContain(entry.getValue(), result.structureId())) {
-                state.advanceItem(entry.getKey(), result.timedNanos());
-                if (remaining.getOrDefault(entry.getKey(), 0) > 0) {
-                    state.costNanosPerItem.merge(entry.getKey(), result.elapsedNanos(), Long::sum);
+                state.advanceItem(entry.getKey(), wallNanos);
+                if (remainingForItem(remaining, entry.getKey()) > 0) {
+                    state.costNanosPerItem.merge(entry.getKey(), wallNanos, Long::sum);
                 }
             }
         }
@@ -935,7 +978,7 @@ public final class SearchEngine {
         Map<String, Boolean> quotaCounting = new LinkedHashMap<>();
         for (RawHit hit : result.hits()) {
             rowValues.putIfAbsent(hit.itemId(), state.spanOf(hit.itemId()));
-            quotaCounting.putIfAbsent(hit.itemId(), remaining.getOrDefault(hit.itemId(), 0) > 0);
+            quotaCounting.putIfAbsent(hit.itemId(), remainingForItem(remaining, hit.itemId()) > 0);
         }
         for (RawHit hit : result.hits()) {
             emitHit(
@@ -959,18 +1002,19 @@ public final class SearchEngine {
             int instanceIndex,
             long workNanos,
             Map<String, ItemDef> targets,
-            Map<String, Integer> remaining,
+            Map<QuotaKey, Integer> remaining,
             SearchState state,
             Listener listener) {
         ItemDef def = targets.get(hit.itemId());
         if (def == null) {
             return;
         }
-        int before = remaining.getOrDefault(hit.itemId(), 0);
+        QuotaKey key = new QuotaKey(hit.itemId(), hit.method());
+        int before = remaining.getOrDefault(key, 0);
         if (before > 0) {
-            remaining.put(hit.itemId(), before - Math.min(hit.count(), before));
+            remaining.put(key, before - Math.min(hit.count(), before));
         }
-        int left = remaining.getOrDefault(hit.itemId(), 0);
+        int left = remainingForItem(remaining, hit.itemId());
         long elapsed = System.nanoTime() - state.startedAt;
         SearchHit out =
                 new SearchHit(
@@ -989,7 +1033,9 @@ public final class SearchEngine {
                         hit.estimated(),
                         elapsed,
                         request.seed(),
-                        workNanos);
+                        workNanos,
+                        state.structuresScanned,
+                        state.containersReplayed);
         state.recordHit(hit.itemId(), hit.count(), left, elapsed);
         listener.onHit(out);
         listener.onProgress(
@@ -1009,7 +1055,7 @@ public final class SearchEngine {
             SearchRequest request,
             Plan plan,
             Map<String, ItemDef> targets,
-            Map<String, Integer> remaining,
+            Map<QuotaKey, Integer> remaining,
             SearchState state,
             Listener listener) {
         if (!plan.needVault() && !plan.needOminousVault()) {
@@ -1071,7 +1117,7 @@ public final class SearchEngine {
             SearchRequest request,
             Plan plan,
             Map<String, ItemDef> targets,
-            Map<String, Integer> remaining,
+            Map<QuotaKey, Integer> remaining,
             SearchState state,
             Listener listener) {
         if (!plan.needElderGuardian()) {
@@ -1124,10 +1170,10 @@ public final class SearchEngine {
             int count,
             int nth,
             Map<String, ItemDef> targets,
-            Map<String, Integer> remaining,
+            Map<QuotaKey, Integer> remaining,
             SearchState state,
             Listener listener) {
-        if (remaining.getOrDefault(itemId, 0) <= 0) {
+        if (remaining.getOrDefault(new QuotaKey(itemId, method), 0) <= 0) {
             return;
         }
         String structureId = fallbackStructureId;
@@ -1167,11 +1213,11 @@ public final class SearchEngine {
     private Set<String> wantedItemsForMethod(
             SearchRequest request,
             Map<String, ItemDef> targets,
-            Map<String, Integer> remaining,
+            Map<QuotaKey, Integer> remaining,
             LootMethod method) {
         Set<String> wanted = new LinkedHashSet<>();
         for (Map.Entry<String, ItemDef> entry : targets.entrySet()) {
-            if (remaining.getOrDefault(entry.getKey(), 0) <= 0) {
+            if (remaining.getOrDefault(new QuotaKey(entry.getKey(), method), 0) <= 0) {
                 continue;
             }
             for (ItemSource source : entry.getValue().sources()) {
@@ -1224,10 +1270,10 @@ public final class SearchEngine {
             return closed != null && closed > 0 ? closed : spanOf(itemId);
         }
 
-        Map<String, Long> durationSnapshot(Map<String, Integer> remaining) {
+        Map<String, Long> durationSnapshot(Map<QuotaKey, Integer> remaining) {
             Map<String, Long> snapshot = new LinkedHashMap<>();
-            for (String itemId : remaining.keySet()) {
-                snapshot.put(itemId, displayOf(itemId));
+            for (QuotaKey key : remaining.keySet()) {
+                snapshot.putIfAbsent(key.itemId(), displayOf(key.itemId()));
             }
             return snapshot;
         }
@@ -1263,7 +1309,8 @@ public final class SearchEngine {
             }
         }
 
-        SearchReport report(boolean completed, boolean cancelled, Map<String, Integer> remaining) {
+        SearchReport report(
+                boolean completed, boolean cancelled, Map<QuotaKey, Integer> remaining) {
             long total = System.nanoTime() - startedAt;
             for (String itemId : foundPerItem.keySet()) {
                 elapsedPerItem.putIfAbsent(itemId, total);

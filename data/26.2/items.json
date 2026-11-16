@@ -226,7 +226,10 @@
     },
     {
       "id": "minecraft:music_disc_precipice", "zhName": "音乐唱片（Precipice）", "group": "record",
-      "sources": [{ "label": "试炼密室宝库", "structures": ["minecraft:trial_chambers"], "method": "vault" }]
+      "sources": [
+        { "label": "试炼密室宝库", "structures": ["minecraft:trial_chambers"], "method": "vault" },
+        { "label": "试炼密室箱子", "structures": ["minecraft:trial_chambers"], "method": "chest" }
+      ]
     },
     {
       "id": "minecraft:music_disc_relic", "zhName": "音乐唱片（Relic）", "group": "record",
